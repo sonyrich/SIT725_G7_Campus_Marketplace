@@ -1,2 +1,3 @@
-# SIT725_G7_Campus_Marketplace
+# SIT725 Group 7
 
+## Campus Marketplace
