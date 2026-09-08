@@ -6,15 +6,22 @@ const loginUser = async (req, res) => {
     try {
         const { email, password } = req.body;
 
-        if (!email || !password) {
+        if (
+            typeof email !== 'string' ||
+            typeof password !== 'string' ||
+            !email.trim() ||
+            !password
+        ) {
             return res.status(400).json({
                 success: false,
                 message: 'Email and password are required'
             });
         }
 
+        const normalizedEmail = email.trim().toLowerCase();
+
         const user = await User.findOne({
-            email: email.toLowerCase()
+            email: normalizedEmail
         });
 
         if (!user) {
@@ -30,6 +37,15 @@ const loginUser = async (req, res) => {
             return res.status(401).json({
                 success: false,
                 message: 'Invalid email or password'
+            });
+        }
+
+        if (!process.env.JWT_SECRET) {
+            console.error('JWT_SECRET is not set');
+
+            return res.status(500).json({
+                success: false,
+                message: 'Server misconfiguration'
             });
         }
 
