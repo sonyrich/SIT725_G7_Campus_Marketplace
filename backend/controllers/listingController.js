@@ -7,6 +7,36 @@ const cleanupUploadedFile = (file) => {
     }
 };
 
+// Get all listings with optional filtering by category and search term
+const getAllListings = async (req, res) => {
+    try {
+        const { category, search } = req.query;
+
+        const filter = { status: 'available' };
+
+        if (category) {
+            filter.category = category;
+        }
+
+        if (search) {
+            filter.title = { $regex: search, $options: 'i' };
+        }
+
+        const listings = await Listing.find(filter).sort({ createdAt: -1 });
+
+        return res.status(200).json({
+            success: true,
+            count: listings.length,
+            data: listings
+        });
+    } catch (err) {
+        return res.status(500).json({
+            success: false,
+            message: 'Server error while fetching listings'
+        });
+    }
+};
+
 const createListing = async (req, res) => {
     try {
         const {
@@ -99,4 +129,4 @@ const createListing = async (req, res) => {
     }
 };
 
-module.exports = { createListing };
+module.exports = { createListing, getAllListings };
