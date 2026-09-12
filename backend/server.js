@@ -16,12 +16,13 @@ app.use(express.json());
 app.use('/api/auth', authRoutes);
 app.use('/uploads', express.static('uploads'));
 
-// error handler must be registered LAST, after every route
-app.use(errorHandler);
 
 app.get('/',(req,res)=>{
     res.send("API testing and running properly");
 })
+
+// error handler must be registered LAST, after every route
+app.use(errorHandler);
 
 app.listen(PORT, ()=>{
     console.log(`APP is running on port ${PORT}`);

@@ -22,9 +22,18 @@ const errorHandler = (err, req, res, next) => {
         return res.status(400).json({ success: false, message });
     }
 
-    if (err) {
-        console.error('Upload error:', err.message);
+    // Custom fileFilter errors from upload.js (e.g. "Only image files... are allowed")
+    // are still genuinely client-input errors, so keep these as 400.
+    if (err.message && err.message.includes('Only image files')) {
+        console.error('Upload validation error:', err.message);
         return res.status(400).json({ success: false, message: err.message });
+    }
+
+    // Everything else (DB errors, programming bugs, filesystem errors, etc.)
+    // is NOT the client's fault — don't leak details, return a generic 500.
+    if (err) {
+        console.error('Unhandled error:', err.message);
+        return res.status(500).json({ success: false, message: 'Internal server error' });
     }
 
     next();
