@@ -11,11 +11,16 @@
   <header class="masthead">
     <div class="wrap masthead-inner">
       <a href="index.html" class="brand">Campus <span>Marketplace</span></a>
+
       <nav class="primary-nav">
         <a href="index.html">Browse</a>
         <a href="create-listing.html">Sell an item</a>
         <a href="#">My listings</a>
         <a href="login.html">Log in</a>
+
+        <!-- FR-03 Logout Functionality -->
+        <a href="#" id="logoutBtn" onclick="logoutUser(); return false;">Log out</a>
+
         <a href="register.html" class="cta">Sign up</a>
       </nav>
     </div>
@@ -23,18 +28,25 @@
 
   <section class="hero">
     <div class="wrap">
+
       <div class="trust-note">
         <span class="dot"></span>
         Verified with your student email — no strangers off-campus
       </div>
+
       <h1>Buy and sell within your own campus</h1>
+
       <p class="lede">
         Textbooks, electronics, furniture and more — listed by students you can
         actually trust, because everyone here verified with a university email.
       </p>
 
       <div class="search-row">
-        <input type="search" id="search-input" placeholder="Search listings, e.g. 'calculus textbook'" />
+        <input
+          type="search"
+          id="search-input"
+          placeholder="Search listings, e.g. 'calculus textbook'"
+        />
         <button id="search-btn" type="button">Search</button>
       </div>
 
@@ -46,12 +58,15 @@
         <button data-category="bikes">Bikes</button>
         <button data-category="other">Other</button>
       </div>
+
     </div>
   </section>
 
   <section class="listings-section">
     <div class="wrap">
+
       <h2>Recently listed</h2>
+
       <p class="listings-note">
         Showing sample listings — this section is wired to live data once the
         Get All Listings API is ready (see <code>js/listings.js</code>).
@@ -63,11 +78,13 @@
         GET /api/listings inside js/listings.js. Keep the .listing-card
         markup structure so the CSS in style.css still applies.
       -->
+
       <div class="listings-grid" id="listings-grid">
 
         <article class="listing-card">
           <div class="thumb">Photo</div>
           <span class="tag">Like New</span>
+
           <div class="body">
             <p class="title">Intro to Algorithms (4th ed.)</p>
             <p class="meta">Textbooks · Burwood campus</p>
@@ -78,6 +95,7 @@
         <article class="listing-card">
           <div class="thumb">Photo</div>
           <span class="tag">Good</span>
+
           <div class="body">
             <p class="title">Mini fridge — barely used</p>
             <p class="meta">Electronics · Geelong campus</p>
@@ -88,6 +106,7 @@
         <article class="listing-card">
           <div class="thumb">Photo</div>
           <span class="tag">Fair</span>
+
           <div class="body">
             <p class="title">Study desk lamp</p>
             <p class="meta">Furniture · Burwood campus</p>
@@ -98,6 +117,7 @@
         <article class="listing-card">
           <div class="thumb">Photo</div>
           <span class="tag">Good</span>
+
           <div class="body">
             <p class="title">Commuter bike, size M</p>
             <p class="meta">Bikes · Waurn Ponds campus</p>
@@ -111,23 +131,41 @@
         Empty state to use once real data loads and there are 0 results,
         e.g. after a search with no matches. Hidden for now.
       -->
-      <div class="empty-state" id="empty-state" style="display: none;">
+
+      <div
+        class="empty-state"
+        id="empty-state"
+        style="display: none;"
+      >
         No listings match your search yet — try a different keyword or category.
       </div>
+
     </div>
   </section>
 
   <footer>
-    <div class="wrap" style="display:flex; justify-content:space-between; width:100%; flex-wrap:wrap; gap:10px;">
-      <span>Campus Marketplace — built by students, for students.</span>
+    <div
+      class="wrap"
+      style="display:flex; justify-content:space-between; width:100%; flex-wrap:wrap; gap:10px;"
+    >
+
+      <span>
+        Campus Marketplace — built by students, for students.
+      </span>
+
       <span>
         <a href="#">About</a> ·
         <a href="#">Safety tips</a> ·
         <a href="#">Contact</a>
       </span>
+
     </div>
   </footer>
 
   <script src="js/listings.js"></script>
+
+  <!-- FR-03 Logout Functionality -->
+  <script src="js/logout.js"></script>
+
 </body>
 </html>

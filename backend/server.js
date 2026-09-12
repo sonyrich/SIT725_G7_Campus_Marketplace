@@ -1,25 +1,34 @@
 require('dotenv').config();
 
-const listingRoutes = require('./routes/listingRoutes');
-const express = require('express'); //requiring express
-const connectDB= require('./config/db');
+const express = require('express');
 const cors = require('cors');
 
+const connectDB = require('./config/db');
+const authRoutes = require('./routes/authRoutes');
+const listingRoutes = require('./routes/listingRoutes');
+const errorHandler = require('./middleware/errorHandler');
 
-const PORT = process.env.PORT;
+const PORT = process.env.PORT || 3000;
 
-const app = express(); //calling express
+const app = express();
 
-connectDB()
+connectDB();
+
 app.use(cors());
 app.use(express.json());
-app.use('/api/listings', listingRoutes);
+
 app.use('/uploads', express.static('uploads'));
 
-app.get('/',(req,res)=>{
-    res.send("API testing and running properly");
-})
+app.use('/api/auth', authRoutes);
+app.use('/api/listings', listingRoutes);
 
-app.listen(PORT, ()=>{
-    console.log(`APP is running on port${PORT}`);
-})
+app.get('/', (req, res) => {
+    res.send('API testing and running properly');
+});
+
+// Error handler must be registered last
+app.use(errorHandler);
+
+app.listen(PORT, () => {
+    console.log(`APP is running on port ${PORT}`);
+});

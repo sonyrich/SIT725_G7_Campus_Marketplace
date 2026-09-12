@@ -2,13 +2,7 @@ const Listing = require('../models/listing');
 
 const createListing = async (req, res) => {
     try {
-        const {
-            title,
-            description,
-            price,
-            category,
-            condition
-        } = req.body;
+        const { title, description, price, category, condition } = req.body;
 
         if (!title || !description || price === undefined || !category || !condition) {
             return res.status(400).json({
@@ -23,6 +17,7 @@ const createListing = async (req, res) => {
             price,
             category,
             condition,
+            imageUrl: req.file ? `/uploads/${req.file.filename}` : undefined,
             seller: req.user._id
         });
 
@@ -41,6 +36,4 @@ const createListing = async (req, res) => {
     }
 };
 
-module.exports = {
-    createListing
-};
+module.exports = { createListing };
