@@ -7,6 +7,10 @@ const cleanupUploadedFile = (file) => {
     }
 };
 
+function escapeRegex(string) {
+    return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+}
+
 // Get all listings with optional filtering by category and search term
 const getAllListings = async (req, res) => {
     try {
@@ -19,7 +23,8 @@ const getAllListings = async (req, res) => {
         }
 
         if (search) {
-            filter.title = { $regex: search, $options: 'i' };
+            const safeSearch = escapeRegex(search);
+            filter.title = { $regex: safeSearch, $options: 'i' };
         }
 
         const listings = await Listing.find(filter).sort({ createdAt: -1 });
