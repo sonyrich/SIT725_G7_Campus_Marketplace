@@ -6,7 +6,7 @@ const connectDB= require('./config/db');
 const cors = require('cors');
 
 
-const PORT = process.env.PORT;
+const PORT = process.env.PORT || 3000;
 
 const app = express(); //calling express
 
@@ -24,6 +24,6 @@ app.get('/',(req,res)=>{
 })
 
 app.listen(PORT, ()=>{
-    console.log(`APP is running on port${PORT}`);
+    console.log(`APP is running on port ${PORT}`);
 })
 
