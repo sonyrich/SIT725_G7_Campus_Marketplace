@@ -16,6 +16,16 @@ const getAllListings = async (req, res) => {
     try {
         const { category, search } = req.query;
 
+        if (
+            (category !== undefined && typeof category !== 'string') ||
+            (search !== undefined && typeof search !== 'string')
+        ) {
+            return res.status(400).json({
+                success: false,
+                message: 'category and search must be single string values'
+            });
+        }
+
         const filter = { status: 'available' };
 
         if (category) {
