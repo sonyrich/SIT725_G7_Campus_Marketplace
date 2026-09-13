@@ -1,6 +1,6 @@
 // frontend/public/js/auth.js
 
-const API_BASE = 'http://localhost:3000/api/auth';
+const API_BASE = '/api/auth';
 
 // ---------- LOGIN ----------
 const loginForm = document.getElementById('loginForm');

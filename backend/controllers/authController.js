@@ -4,7 +4,7 @@ const jwt = require('jsonwebtoken');
 
 const registerUser = async (req, res) => {
     try {
-        const { fullName, email, password, studentId } = req.body;
+        const { fullName, email, password, studentId } = req.body || {};
 
         if (
             typeof fullName !== 'string' || !fullName.trim() ||
@@ -29,15 +29,6 @@ const registerUser = async (req, res) => {
             });
         }
 
-        const hashedPassword = await bcrypt.hash(password, 10);
-
-        const newUser = await User.create({
-            fullName: fullName.trim(),
-            email: normalizedEmail,
-            password: hashedPassword,
-            studentID: studentId.trim()
-        });
-
         if (!process.env.JWT_SECRET) {
             console.error('JWT_SECRET is not set');
 
@@ -46,6 +37,15 @@ const registerUser = async (req, res) => {
                 message: 'Server misconfiguration'
             });
         }
+
+        const hashedPassword = await bcrypt.hash(password, 10);
+
+        const newUser = await User.create({
+            fullName: fullName.trim(),
+            email: normalizedEmail,
+            password: hashedPassword,
+            studentID: studentId.trim()
+        });
 
         const token = jwt.sign(
             {

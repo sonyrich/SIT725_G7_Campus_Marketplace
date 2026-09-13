@@ -1,7 +1,7 @@
 // createListing.js — owned by Krushal
 // Wired up to POST /api/listings (multipart/form-data + JWT auth)
 
-const LISTINGS_API = 'http://localhost:3000/api/listings';
+const LISTINGS_API = '/api/listings';
 
 const form = document.getElementById('create-listing-form');
 
