@@ -7,6 +7,51 @@ const cleanupUploadedFile = (file) => {
     }
 };
 
+function escapeRegex(string) {
+    return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+}
+
+// Get all listings with optional filtering by category and search term
+const getAllListings = async (req, res) => {
+    try {
+        const { category, search } = req.query;
+
+        if (
+            (category !== undefined && typeof category !== 'string') ||
+            (search !== undefined && typeof search !== 'string')
+        ) {
+            return res.status(400).json({
+                success: false,
+                message: 'category and search must be single string values'
+            });
+        }
+
+        const filter = { status: 'available' };
+
+        if (category) {
+            filter.category = category;
+        }
+
+        if (search) {
+            const safeSearch = escapeRegex(search);
+            filter.title = { $regex: safeSearch, $options: 'i' };
+        }
+
+        const listings = await Listing.find(filter).sort({ createdAt: -1 });
+
+        return res.status(200).json({
+            success: true,
+            count: listings.length,
+            data: listings
+        });
+    } catch (err) {
+        return res.status(500).json({
+            success: false,
+            message: 'Server error while fetching listings'
+        });
+    }
+};
+
 const createListing = async (req, res) => {
     try {
         const {
@@ -99,4 +144,4 @@ const createListing = async (req, res) => {
     }
 };
 
-module.exports = { createListing };
+module.exports = { createListing, getAllListings };
