@@ -37,14 +37,18 @@ const getAllListings = async (req, res) => {
             filter.title = { $regex: safeSearch, $options: 'i' };
         }
 
-        const listings = await Listing.find(filter).sort({ createdAt: -1 });
+        const listings = await Listing.find(filter)
+            .sort({ createdAt: -1 });
 
         return res.status(200).json({
             success: true,
             count: listings.length,
             data: listings
         });
+
     } catch (err) {
+        console.error('Get listings error:', err);
+
         return res.status(500).json({
             success: false,
             message: 'Server error while fetching listings'
@@ -52,6 +56,7 @@ const getAllListings = async (req, res) => {
     }
 };
 
+// Create a new listing
 const createListing = async (req, res) => {
     try {
         const {
@@ -144,4 +149,53 @@ const createListing = async (req, res) => {
     }
 };
 
-module.exports = { createListing, getAllListings };
+// FR-12: Get seller contact details for a listing
+const getSellerContact = async (req, res) => {
+    try {
+        const listing = await Listing.findById(req.params.id)
+            .populate('seller', 'fullName email');
+
+        if (!listing) {
+            return res.status(404).json({
+                success: false,
+                message: 'Listing not found'
+            });
+        }
+
+        if (!listing.seller) {
+            return res.status(404).json({
+                success: false,
+                message: 'Seller information not found'
+            });
+        }
+
+        return res.status(200).json({
+            success: true,
+            data: {
+                sellerName: listing.seller.fullName,
+                sellerEmail: listing.seller.email
+            }
+        });
+
+    } catch (error) {
+        if (error.name === 'CastError') {
+            return res.status(400).json({
+                success: false,
+                message: 'Invalid listing ID'
+            });
+        }
+
+        console.error('Contact seller error:', error);
+
+        return res.status(500).json({
+            success: false,
+            message: 'Server error while fetching seller contact'
+        });
+    }
+};
+
+module.exports = {
+    createListing,
+    getAllListings,
+    getSellerContact
+};
