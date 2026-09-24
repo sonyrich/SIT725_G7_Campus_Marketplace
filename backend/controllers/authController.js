@@ -2,6 +2,63 @@ const User = require('../models/Users');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 
+const registerUser = async (req, res) => {
+    try {
+        const { fullName, email, password, studentId } = req.body;
+
+        if (!fullName || !email || !password || !studentId) {
+            return res.status(400).json({
+                success: false,
+                message: 'Full name, email, password and student ID are required'
+            });
+        }
+
+        const normalizedEmail = email.trim().toLowerCase();
+
+        const existingUser = await User.findOne({
+            email: normalizedEmail
+        });
+
+        if (existingUser) {
+            return res.status(409).json({
+                success: false,
+                message: 'An account with this email already exists'
+            });
+        }
+
+        const hashedPassword = await bcrypt.hash(password, 10);
+
+        const user = await User.create({
+            fullName: fullName.trim(),
+            email: normalizedEmail,
+            password: hashedPassword,
+            studentID: studentId.trim()
+        });
+
+        return res.status(201).json({
+            success: true,
+            message: 'Registration successful!',
+            data: {
+                user: {
+                    id: user._id,
+                    fullName: user.fullName,
+                    email: user.email,
+                    studentID: user.studentID,
+                    role: user.role
+                }
+            }
+        });
+
+    } catch (error) {
+        console.error('Registration error:', error);
+
+        return res.status(500).json({
+            success: false,
+            message: 'Server error while registering'
+        });
+    }
+};
+
 const loginUser = async (req, res) => {
     try {
         const { email, password } = req.body;
@@ -85,5 +142,6 @@ const loginUser = async (req, res) => {
 };
 
 module.exports = {
+    registerUser,
     loginUser
 };
