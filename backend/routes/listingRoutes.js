@@ -6,7 +6,8 @@ const {
     createListing,
     getAllListings,
     getListingById,
-    updateListing
+    updateListing,
+    getSellerContact
 } = require('../controllers/listingController');
 
 const { protect } = require('../middleware/authMiddleware');
@@ -17,8 +18,19 @@ const upload = require('../middleware/upload');
 router.get('/', getAllListings);
 
 
+// Get seller contact
+router.get(
+    '/:id/contact',
+    protect,
+    getSellerContact
+);
+
+
 // Get one listing
-router.get('/:id', getListingById);
+router.get(
+    '/:id',
+    getListingById
+);
 
 
 // Create listing
