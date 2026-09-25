@@ -11,7 +11,8 @@ function escapeRegex(string) {
     return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 }
 
-// Get all listings with optional filtering by category and search term
+
+// Get all listings
 const getAllListings = async (req, res) => {
     try {
         const { category, search } = req.query;
@@ -26,7 +27,9 @@ const getAllListings = async (req, res) => {
             });
         }
 
-        const filter = { status: 'available' };
+        const filter = {
+            status: 'available'
+        };
 
         if (category) {
             filter.category = category;
@@ -34,17 +37,25 @@ const getAllListings = async (req, res) => {
 
         if (search) {
             const safeSearch = escapeRegex(search);
-            filter.title = { $regex: safeSearch, $options: 'i' };
+
+            filter.title = {
+                $regex: safeSearch,
+                $options: 'i'
+            };
         }
 
-        const listings = await Listing.find(filter).sort({ createdAt: -1 });
+        const listings = await Listing.find(filter)
+            .sort({ createdAt: -1 });
 
         return res.status(200).json({
             success: true,
             count: listings.length,
             data: listings
         });
-    } catch (err) {
+
+    } catch (error) {
+        console.error('Get listings error:', error);
+
         return res.status(500).json({
             success: false,
             message: 'Server error while fetching listings'
@@ -52,6 +63,43 @@ const getAllListings = async (req, res) => {
     }
 };
 
+
+// Get one listing by ID
+const getListingById = async (req, res) => {
+    try {
+        const listing = await Listing.findById(req.params.id);
+
+        if (!listing) {
+            return res.status(404).json({
+                success: false,
+                message: 'Listing not found'
+            });
+        }
+
+        return res.status(200).json({
+            success: true,
+            data: listing
+        });
+
+    } catch (error) {
+        console.error('Get listing error:', error);
+
+        if (error.name === 'CastError') {
+            return res.status(400).json({
+                success: false,
+                message: 'Invalid listing ID'
+            });
+        }
+
+        return res.status(500).json({
+            success: false,
+            message: 'Server error while fetching listing'
+        });
+    }
+};
+
+
+// Create listing
 const createListing = async (req, res) => {
     try {
         const {
@@ -144,4 +192,157 @@ const createListing = async (req, res) => {
     }
 };
 
-module.exports = { createListing, getAllListings };
+
+// Update listing
+const updateListing = async (req, res) => {
+    try {
+        const listing = await Listing.findById(req.params.id);
+
+        if (!listing) {
+            cleanupUploadedFile(req.file);
+
+            return res.status(404).json({
+                success: false,
+                message: 'Listing not found'
+            });
+        }
+
+        if (listing.seller.toString() !== req.user._id.toString()) {
+            cleanupUploadedFile(req.file);
+
+            return res.status(403).json({
+                success: false,
+                message: 'You are not allowed to edit this listing'
+            });
+        }
+
+        const {
+            title,
+            description,
+            price,
+            category,
+            condition
+        } = req.body || {};
+
+        if (title !== undefined) {
+            if (!title.trim() || title.trim().length < 2) {
+                cleanupUploadedFile(req.file);
+
+                return res.status(400).json({
+                    success: false,
+                    message: 'Title must contain at least 2 characters'
+                });
+            }
+
+            listing.title = title.trim();
+        }
+
+        if (description !== undefined) {
+            if (
+                !description.trim() ||
+                description.trim().length < 2
+            ) {
+                cleanupUploadedFile(req.file);
+
+                return res.status(400).json({
+                    success: false,
+                    message: 'Description must contain at least 2 characters'
+                });
+            }
+
+            listing.description = description.trim();
+        }
+
+        if (price !== undefined) {
+            const numericPrice = Number(price);
+
+            if (
+                !Number.isFinite(numericPrice) ||
+                numericPrice < 0
+            ) {
+                cleanupUploadedFile(req.file);
+
+                return res.status(400).json({
+                    success: false,
+                    message: 'Price must be a valid non-negative number'
+                });
+            }
+
+            listing.price = numericPrice;
+        }
+
+        if (category !== undefined) {
+            if (!category.trim()) {
+                cleanupUploadedFile(req.file);
+
+                return res.status(400).json({
+                    success: false,
+                    message: 'Category is required'
+                });
+            }
+
+            listing.category = category.trim();
+        }
+
+        if (condition !== undefined) {
+            const allowedConditions = [
+                'New',
+                'Like New',
+                'Good',
+                'Fair',
+                'Poor'
+            ];
+
+            if (!allowedConditions.includes(condition)) {
+                cleanupUploadedFile(req.file);
+
+                return res.status(400).json({
+                    success: false,
+                    message: 'Invalid listing condition'
+                });
+            }
+
+            listing.condition = condition;
+        }
+
+        if (req.file) {
+            listing.imageUrl = `/uploads/${req.file.filename}`;
+        }
+
+        await listing.save();
+
+        return res.status(200).json({
+            success: true,
+            message: 'Listing updated successfully',
+            data: listing
+        });
+
+    } catch (error) {
+        cleanupUploadedFile(req.file);
+
+        console.error('Update listing error:', error);
+
+        if (
+            error.name === 'ValidationError' ||
+            error.name === 'CastError'
+        ) {
+            return res.status(400).json({
+                success: false,
+                message: 'Invalid listing data'
+            });
+        }
+
+        return res.status(500).json({
+            success: false,
+            message: 'Server error while updating listing'
+        });
+    }
+};
+
+
+module.exports = {
+    createListing,
+    getAllListings,
+    getListingById,
+    updateListing
+};
