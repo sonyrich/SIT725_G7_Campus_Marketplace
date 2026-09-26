@@ -1,6 +1,7 @@
 // listings.js — owned by Sony
-// FR-05: fetches /api/listings and dynamically renders .listing-card elements
-// FR-14: adds Report Listing access for each listing
+// FR-05: Browse/search/filter listings
+// FR-09: Show Edit Listing option for the listing owner
+// FR-14: Show Report Listing option for listings
 
 const listingsGrid = document.getElementById('listings-grid');
 const emptyState = document.getElementById('empty-state');
@@ -11,20 +12,68 @@ const searchBtn = document.getElementById('search-btn');
 let currentController = null;
 
 
+// Get logged-in user from localStorage
+function getCurrentUser() {
+  try {
+    const storedUser = localStorage.getItem('user');
+
+    if (!storedUser) {
+      return null;
+    }
+
+    return JSON.parse(storedUser);
+
+  } catch (error) {
+    console.error('Could not read logged-in user:', error);
+    return null;
+  }
+}
+
+
+// Get logged-in user's ID
+function getCurrentUserId() {
+  const user = getCurrentUser();
+
+  if (!user) {
+    return null;
+  }
+
+  return user._id || user.id || user.userId || null;
+}
+
+
+// Get seller ID from listing
+function getSellerId(listing) {
+  if (!listing || !listing.seller) {
+    return null;
+  }
+
+  if (typeof listing.seller === 'string') {
+    return listing.seller;
+  }
+
+  return listing.seller._id || listing.seller.id || null;
+}
+
+
+// Build listing card
 function buildCardEl(listing) {
+
   const article = document.createElement('article');
   article.className = 'listing-card';
 
 
-  // Listing image
+  // Image / placeholder
   const thumb = document.createElement('div');
   thumb.className = 'thumb';
 
   if (listing.imageUrl) {
+
     const img = document.createElement('img');
 
     img.src = listing.imageUrl;
     img.alt = listing.title || '';
+
     img.style.width = '100%';
     img.style.height = '100%';
     img.style.objectFit = 'cover';
@@ -32,13 +81,14 @@ function buildCardEl(listing) {
     thumb.appendChild(img);
 
   } else {
+
     thumb.textContent = 'Photo';
   }
 
   article.appendChild(thumb);
 
 
-  // Condition tag
+  // Condition
   const tag = document.createElement('span');
   tag.className = 'tag';
   tag.textContent = listing.condition || '';
@@ -46,7 +96,7 @@ function buildCardEl(listing) {
   article.appendChild(tag);
 
 
-  // Listing body
+  // Card body
   const body = document.createElement('div');
   body.className = 'body';
 
@@ -76,7 +126,39 @@ function buildCardEl(listing) {
 
 
   // ------------------------------------------------
-  // FR-14 Report Listing
+  // FR-09 — Edit Listing
+  // Only show Edit option to listing owner
+  // ------------------------------------------------
+
+  const currentUserId = getCurrentUserId();
+  const sellerId = getSellerId(listing);
+
+  if (
+    currentUserId &&
+    sellerId &&
+    String(currentUserId) === String(sellerId)
+  ) {
+
+    const editLink = document.createElement('a');
+
+    editLink.href =
+      `edit-listing.html?id=${encodeURIComponent(listing._id)}`;
+
+    editLink.textContent = 'Edit listing';
+
+    editLink.style.display = 'inline-block';
+    editLink.style.marginTop = '10px';
+    editLink.style.fontWeight = '600';
+    editLink.style.color = '#2F6B4F';
+    editLink.style.textDecoration = 'underline';
+    editLink.style.cursor = 'pointer';
+
+    body.appendChild(editLink);
+  }
+
+
+  // ------------------------------------------------
+  // FR-14 — Report Listing
   // ------------------------------------------------
 
   const reportLink = document.createElement('a');
@@ -102,7 +184,9 @@ function buildCardEl(listing) {
 }
 
 
+// Empty state
 function showEmptyState() {
+
   if (listingsGrid) {
     listingsGrid.innerHTML = '';
   }
@@ -117,7 +201,9 @@ function showEmptyState() {
 }
 
 
+// Error state
 function showErrorState() {
+
   if (listingsGrid) {
     listingsGrid.innerHTML = '';
   }
@@ -132,7 +218,9 @@ function showErrorState() {
 }
 
 
+// Render listings
 function renderListings(listings) {
+
   if (!listingsGrid) {
     return;
   }
@@ -153,6 +241,7 @@ function renderListings(listings) {
   listingsGrid.innerHTML = '';
 
   listings.forEach((listing) => {
+
     listingsGrid.appendChild(
       buildCardEl(listing)
     );
@@ -160,6 +249,7 @@ function renderListings(listings) {
 }
 
 
+// Fetch listings
 async function fetchListings({
   category = '',
   search = ''
@@ -174,6 +264,7 @@ async function fetchListings({
   const { signal } = currentController;
 
   try {
+
     const params = new URLSearchParams();
 
     if (
@@ -254,14 +345,19 @@ document
             b.classList.remove('active');
           });
 
+
         btn.classList.add('active');
 
-        fetchListings({
-          category: btn.dataset.category,
 
-          search: searchInput
-            ? searchInput.value.trim()
-            : ''
+        fetchListings({
+
+          category:
+            btn.dataset.category,
+
+          search:
+            searchInput
+              ? searchInput.value.trim()
+              : ''
         });
       }
     );
@@ -280,21 +376,25 @@ if (searchBtn) {
           '#category-filters button.active'
         );
 
-      fetchListings({
-        category: activePill
-          ? activePill.dataset.category
-          : '',
 
-        search: searchInput
-          ? searchInput.value.trim()
-          : ''
+      fetchListings({
+
+        category:
+          activePill
+            ? activePill.dataset.category
+            : '',
+
+        search:
+          searchInput
+            ? searchInput.value.trim()
+            : ''
       });
     }
   );
 }
 
 
-// Search with Enter key
+// Search using Enter
 if (searchInput) {
 
   searchInput.addEventListener(
@@ -309,10 +409,11 @@ if (searchInput) {
 }
 
 
-// Initial page load
+// Load listings when page opens
 document.addEventListener(
   'DOMContentLoaded',
   function () {
+
     fetchListings();
   }
 );

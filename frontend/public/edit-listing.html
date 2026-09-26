@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Edit listing — Campus Marketplace</title>
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+
+<body>
+
+  <header class="masthead">
+    <div class="wrap masthead-inner">
+
+      <a href="index.html" class="brand">
+        Campus <span>Marketplace</span>
+      </a>
+
+      <nav class="primary-nav">
+        <a href="index.html">Browse</a>
+        <a href="create-listing.html">Sell an item</a>
+        <a href="#">My listings</a>
+        <a href="login.html">Log in</a>
+        <a href="register.html" class="cta">Sign up</a>
+      </nav>
+
+    </div>
+  </header>
+
+
+  <section class="form-page">
+
+    <div class="wrap">
+
+      <h1>Edit listing</h1>
+
+      <p class="sub">
+        Update the details of your marketplace listing.
+      </p>
+
+
+      <form class="card-form" id="edit-listing-form">
+
+        <div class="field">
+
+          <label for="title">Title</label>
+
+          <input
+            type="text"
+            id="title"
+            name="title"
+            placeholder="Enter listing title"
+            required
+          />
+
+        </div>
+
+
+        <div class="field">
+
+          <label for="description">Description</label>
+
+          <textarea
+            id="description"
+            name="description"
+            placeholder="Enter listing description"
+            required
+          ></textarea>
+
+        </div>
+
+
+        <div class="field-row">
+
+          <div class="field">
+
+            <label for="price">
+              Price
+              <span class="hint">AUD</span>
+            </label>
+
+            <input
+              type="number"
+              id="price"
+              name="price"
+              min="0"
+              step="0.01"
+              placeholder="0.00"
+              required
+            />
+
+          </div>
+
+
+          <div class="field">
+
+            <label for="condition">Condition</label>
+
+            <select
+              id="condition"
+              name="condition"
+              required
+            >
+
+              <option value="" disabled>
+                Select condition
+              </option>
+
+              <option value="New">
+                New
+              </option>
+
+              <option value="Like New">
+                Like New
+              </option>
+
+              <option value="Good">
+                Good
+              </option>
+
+              <option value="Fair">
+                Fair
+              </option>
+
+              <option value="Poor">
+                Poor
+              </option>
+
+            </select>
+
+          </div>
+
+        </div>
+
+
+        <div class="field">
+
+          <label for="category">Category</label>
+
+          <select
+            id="category"
+            name="category"
+            required
+          >
+
+            <option value="" disabled>
+              Select category
+            </option>
+
+            <option value="textbooks">
+              Textbooks
+            </option>
+
+            <option value="electronics">
+              Electronics
+            </option>
+
+            <option value="furniture">
+              Furniture
+            </option>
+
+            <option value="bikes">
+              Bikes
+            </option>
+
+            <option value="other">
+              Other
+            </option>
+
+          </select>
+
+        </div>
+
+
+        <div class="field">
+
+          <label for="image">
+            Replace photo
+          </label>
+
+          <div class="file-drop">
+
+            <input
+              type="file"
+              id="image"
+              name="image"
+              accept="image/*"
+            />
+
+            <p style="margin: 8px 0 0;">
+              Leave this empty if you want to keep the current photo.
+            </p>
+
+          </div>
+
+        </div>
+
+
+        <div class="form-actions">
+
+          <button
+            type="submit"
+            class="btn-primary"
+          >
+            Save changes
+          </button>
+
+          <a
+            href="index.html"
+            class="btn-text"
+          >
+            Cancel
+          </a>
+
+        </div>
+
+      </form>
+
+    </div>
+
+  </section>
+
+
+  <footer>
+
+    <div
+      class="wrap"
+      style="
+        display:flex;
+        justify-content:space-between;
+        width:100%;
+        flex-wrap:wrap;
+        gap:10px;
+      "
+    >
+
+      <span>
+        Campus Marketplace — built by students, for students.
+      </span>
+
+      <span>
+        <a href="#">About</a> ·
+        <a href="#">Safety tips</a> ·
+        <a href="#">Contact</a>
+      </span>
+
+    </div>
+
+  </footer>
+
+
+  <script src="js/editListing.js"></script>
+
+</body>
+</html>
