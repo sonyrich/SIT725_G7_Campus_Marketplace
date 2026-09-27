@@ -359,6 +359,58 @@ const updateListing = async (req, res) => {
     }
 };
 
+// --------------------------------------------------
+// FR-13: Mark listing as sold
+// --------------------------------------------------
+const markListingAsSold = async (req, res) => {
+    try {
+        const listing = await Listing.findById(req.params.id);
+
+        if (!listing) {
+            return res.status(404).json({
+                success: false,
+                message: 'Listing not found.'
+            });
+        }
+
+        // Only the owner can change their listing's availability
+        if (listing.seller.toString() !== req.user._id.toString()) {
+            return res.status(403).json({
+                success: false,
+                message: 'You are not authorized to update this listing.'
+            });
+        }
+
+        if (listing.status === 'sold') {
+            return res.status(400).json({
+                success: false,
+                message: 'This listing is already marked as sold.'
+            });
+        }
+
+        listing.status = 'sold';
+        await listing.save();
+
+        return res.status(200).json({
+            success: true,
+            message: 'Listing marked as sold.',
+            data: listing
+        });
+    } catch (err) {
+        console.error('markListingAsSold error:', err);
+        if (err.name === 'CastError') {
+            return res.status(400).json({
+                success: false,
+                message: 'Invalid listing ID'
+            });
+        }
+
+        return res.status(500).json({
+            success: false,
+            message: 'Server error while updating listing status.'
+        });
+    }
+};
 
 // --------------------------------------------------
 // FR-12: Get seller contact details
@@ -413,5 +465,6 @@ module.exports = {
     getAllListings,
     getListingById,
     updateListing,
+    markListingAsSold,
     getSellerContact
 };
