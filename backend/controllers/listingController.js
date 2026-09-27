@@ -39,14 +39,24 @@ const getAllListings = async (req, res) => {
             filter.category = category;
         }
 
+        // Search Listings by Keyword (FR-06) [6] (Sony)
         if (search) {
-            const safeSearch = escapeRegex(search);
+            const safeSearch = escapeRegex(search.trim());
 
-            filter.title = {
-                $regex: safeSearch,
-                $options: 'i'
-            };
+            if (safeSearch.length > 0) {
+                const keywordRegex = { $regex: safeSearch, $options: 'i' };
+
+                // Match the keyword against title OR description OR category,
+                // so buyers can find items using any relevant word — not just
+                // words that happen to appear in the title.
+                filter.$or = [
+                    { title: keywordRegex },
+                    { description: keywordRegex },
+                    { category: keywordRegex }
+                ];
+            }
         }
+
 
         const listings = await Listing.find(filter)
             .sort({ createdAt: -1 });
