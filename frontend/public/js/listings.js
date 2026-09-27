@@ -1,6 +1,7 @@
 // listings.js — owned by Sony
 // FR-05: Browse/search/filter listings
 // FR-09: Show Edit Listing option for the listing owner
+// FR-14: Show Report Listing option for listings
 
 const listingsGrid = document.getElementById('listings-grid');
 const emptyState = document.getElementById('empty-state');
@@ -41,7 +42,7 @@ function getCurrentUserId() {
 }
 
 
-// Get seller ID from a listing
+// Get seller ID from listing
 function getSellerId(listing) {
   if (!listing || !listing.seller) {
     return null;
@@ -87,7 +88,7 @@ function buildCardEl(listing) {
   article.appendChild(thumb);
 
 
-  // Condition tag
+  // Condition
   const tag = document.createElement('span');
   tag.className = 'tag';
   tag.textContent = listing.condition || '';
@@ -126,21 +127,11 @@ function buildCardEl(listing) {
 
   // ------------------------------------------------
   // FR-09 — Edit Listing
-  // Only show Edit option to the listing owner
+  // Only show Edit option to listing owner
   // ------------------------------------------------
 
   const currentUserId = getCurrentUserId();
   const sellerId = getSellerId(listing);
-
-  console.log('FR09 owner check:', {
-    currentUserId,
-    sellerId,
-    matches:
-      currentUserId &&
-      sellerId &&
-      String(currentUserId) === String(sellerId)
-  });
-
 
   if (
     currentUserId &&
@@ -164,6 +155,27 @@ function buildCardEl(listing) {
 
     body.appendChild(editLink);
   }
+
+
+  // ------------------------------------------------
+  // FR-14 — Report Listing
+  // ------------------------------------------------
+
+  const reportLink = document.createElement('a');
+
+  reportLink.href =
+    `report-listing.html?id=${encodeURIComponent(listing._id)}`;
+
+  reportLink.textContent = 'Report listing';
+
+  reportLink.style.display = 'inline-block';
+  reportLink.style.marginTop = '8px';
+  reportLink.style.fontSize = '13px';
+  reportLink.style.color = '#A23B2E';
+  reportLink.style.textDecoration = 'underline';
+  reportLink.style.cursor = 'pointer';
+
+  body.appendChild(reportLink);
 
 
   article.appendChild(body);
@@ -214,7 +226,6 @@ function renderListings(listings) {
   }
 
   if (!listings || listings.length === 0) {
-
     showEmptyState();
     return;
   }
@@ -252,26 +263,21 @@ async function fetchListings({
 
   const { signal } = currentController;
 
-
   try {
 
     const params = new URLSearchParams();
-
 
     if (
       category &&
       category !== 'all'
     ) {
-
       params.append(
         'category',
         category
       );
     }
 
-
     if (search) {
-
       params.append(
         'search',
         search
@@ -288,7 +294,6 @@ async function fetchListings({
 
 
     if (!res.ok) {
-
       throw new Error(
         `Request failed with status ${res.status}`
       );
@@ -299,7 +304,6 @@ async function fetchListings({
 
 
     if (!result.success) {
-
       throw new Error(
         result.message ||
         'Failed to fetch listings'
@@ -338,7 +342,6 @@ document
         document
           .querySelectorAll('#category-filters button')
           .forEach(function (b) {
-
             b.classList.remove('active');
           });
 
@@ -391,7 +394,7 @@ if (searchBtn) {
 }
 
 
-// Search using Enter key
+// Search using Enter
 if (searchInput) {
 
   searchInput.addEventListener(
@@ -399,7 +402,6 @@ if (searchInput) {
     function (e) {
 
       if (e.key === 'Enter') {
-
         searchBtn.click();
       }
     }
