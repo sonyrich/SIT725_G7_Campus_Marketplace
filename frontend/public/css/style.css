@@ -547,7 +547,7 @@ html[data-auth="in"] [data-auth="out"] { display: none !important; }
   padding: 10px 12px;
   border: 1px solid var(--line);
   border-radius: var(--radius-sm);
-  font-size: 15px;               /* >= 15px stops iOS zooming into inputs */
+  font-size: 15px;
   color: var(--ink);
   background: var(--surface);
 }
@@ -965,6 +965,21 @@ html[data-auth="in"] [data-auth="out"] { display: none !important; }
 
 /* ---------- 14. Responsive ---------- */
 
+/* Touch screens: compact controls grow to the recommended 44px tap size
+   (mouse users keep the compact 36px versions) */
+@media (pointer: coarse) {
+  .btn-sm,
+  .filters button,
+  .segmented button,
+  .sort-control select { min-height: 44px; }
+}
+
+/* Small laptops / large tablets: the greeting is dropped so the full
+   logged-in menu never wraps (found during cross-device UI testing) */
+@media (min-width: 761px) and (max-width: 900px) {
+  .nav-user { display: none; }
+}
+
 /* Tablet and below: navigation collapses into a hamburger menu */
 @media (max-width: 760px) {
   :root { --gutter: 16px; }
@@ -1020,6 +1035,14 @@ html[data-auth="in"] [data-auth="out"] { display: none !important; }
 
 /* Phones */
 @media (max-width: 520px) {
+  /* iOS Safari zooms the page into any field under 16px — keep them at 16px */
+  .field input,
+  .field select,
+  .field textarea,
+  .form-group input,
+  .search-row input[type="search"],
+  .sort-control select { font-size: 16px; }
+
   .trust-note { margin-bottom: 20px; }
 
   .search-row { flex-direction: column; }
