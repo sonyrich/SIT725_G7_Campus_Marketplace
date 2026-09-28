@@ -24,7 +24,7 @@ if (loginForm) {
 
             if (!res.ok || !data.success) {
                 messageEl.textContent = data.message || 'Login failed. Please check your details.';
-                messageEl.style.color = 'red';
+                messageEl.className = 'message is-error';
                 return;
             }
 
@@ -33,7 +33,7 @@ if (loginForm) {
             localStorage.setItem('user', JSON.stringify(data.data.user));
 
             messageEl.textContent = 'Login successful! Redirecting...';
-            messageEl.style.color = 'green';
+            messageEl.className = 'message is-success';
 
             setTimeout(() => {
                 window.location.href = 'index.html';
@@ -42,7 +42,7 @@ if (loginForm) {
         } catch (err) {
             console.error('Login error:', err);
             messageEl.textContent = 'Something went wrong. Is the backend server running?';
-            messageEl.style.color = 'red';
+            messageEl.className = 'message is-error';
         }
     });
 }
@@ -63,7 +63,7 @@ if (registerForm) {
 
         if (password !== confirmPassword) {
             messageEl.textContent = 'Passwords do not match.';
-            messageEl.style.color = 'red';
+            messageEl.className = 'message is-error';
             return;
         }
 
@@ -78,7 +78,7 @@ if (registerForm) {
 
             if (!res.ok || !data.success) {
                 messageEl.textContent = data.message || 'Registration failed.';
-                messageEl.style.color = 'red';
+                messageEl.className = 'message is-error';
                 return;
             }
 
@@ -86,7 +86,7 @@ if (registerForm) {
             localStorage.setItem('user', JSON.stringify(data.data.user));
 
             messageEl.textContent = 'Account created! Redirecting...';
-            messageEl.style.color = 'green';
+            messageEl.className = 'message is-success';
 
             setTimeout(() => {
                 window.location.href = 'index.html';
@@ -95,7 +95,7 @@ if (registerForm) {
         } catch (err) {
             console.error('Register error:', err);
             messageEl.textContent = 'Something went wrong. Is the backend server running?';
-            messageEl.style.color = 'red';
+            messageEl.className = 'message is-error';
         }
     });
 }

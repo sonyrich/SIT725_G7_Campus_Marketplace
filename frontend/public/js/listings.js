@@ -74,10 +74,6 @@ function buildCardEl(listing) {
     img.src = listing.imageUrl;
     img.alt = listing.title || '';
 
-    img.style.width = '100%';
-    img.style.height = '100%';
-    img.style.objectFit = 'cover';
-
     thumb.appendChild(img);
 
   } else {
@@ -125,6 +121,11 @@ function buildCardEl(listing) {
   body.appendChild(price);
 
 
+  // Action buttons share one row, styled by .card-actions in style.css
+  const actions = document.createElement('div');
+  actions.className = 'card-actions';
+
+
   // ------------------------------------------------
   // FR-09 — Edit Listing
   // Only show Edit option to listing owner
@@ -145,15 +146,9 @@ function buildCardEl(listing) {
       `edit-listing.html?id=${encodeURIComponent(listing._id)}`;
 
     editLink.textContent = 'Edit listing';
+    editLink.className = 'btn btn-secondary btn-sm';
 
-    editLink.style.display = 'inline-block';
-    editLink.style.marginTop = '10px';
-    editLink.style.fontWeight = '600';
-    editLink.style.color = '#2F6B4F';
-    editLink.style.textDecoration = 'underline';
-    editLink.style.cursor = 'pointer';
-
-    body.appendChild(editLink);
+    actions.appendChild(editLink);
 
     // ------------------------------------------------
     // FR-13 — Mark Item as Sold
@@ -163,17 +158,8 @@ function buildCardEl(listing) {
       const soldBtn = document.createElement('button');
 
       soldBtn.textContent = 'Mark as Sold';
-
-      soldBtn.style.display = 'inline-block';
-      soldBtn.style.marginTop = '10px';
-      soldBtn.style.marginLeft = '10px';
-      soldBtn.style.fontWeight = '600';
-      soldBtn.style.color = '#fff';
-      soldBtn.style.backgroundColor = '#B3413E';
-      soldBtn.style.border = 'none';
-      soldBtn.style.borderRadius = '4px';
-      soldBtn.style.padding = '6px 12px';
-      soldBtn.style.cursor = 'pointer';
+      soldBtn.type = 'button';
+      soldBtn.className = 'btn btn-danger btn-sm';
 
       soldBtn.addEventListener('click', async function () {
         const confirmed = window.confirm(
@@ -206,27 +192,27 @@ function buildCardEl(listing) {
 
           // Re-run the current search/filter so the sold
           // item drops out of the active listings view
-          fetchListings();
+          // (clicking Search re-uses the active category + keyword)
+          if (searchBtn) {
+            searchBtn.click();
+          } else {
+            fetchListings();
+          }
 
         } catch (error) {
           console.error('Mark as sold error:', error);
           alert(error.message);
         }
       });
-      body.appendChild(soldBtn);
+      actions.appendChild(soldBtn);
     } else {
 
       const soldBadge = document.createElement('span');
 
       soldBadge.textContent = 'SOLD';
+      soldBadge.className = 'sold-badge';
 
-      soldBadge.style.display = 'inline-block';
-      soldBadge.style.marginTop = '10px';
-      soldBadge.style.marginLeft = '10px';
-      soldBadge.style.fontWeight = '700';
-      soldBadge.style.color = '#B3413E';
-
-      body.appendChild(soldBadge);
+      actions.appendChild(soldBadge);
     }
   }
 
@@ -241,15 +227,11 @@ function buildCardEl(listing) {
     `report-listing.html?id=${encodeURIComponent(listing._id)}`;
 
   reportLink.textContent = 'Report listing';
+  reportLink.className = 'btn-link danger';
 
-  reportLink.style.display = 'inline-block';
-  reportLink.style.marginTop = '8px';
-  reportLink.style.fontSize = '13px';
-  reportLink.style.color = '#A23B2E';
-  reportLink.style.textDecoration = 'underline';
-  reportLink.style.cursor = 'pointer';
+  actions.appendChild(reportLink);
 
-  body.appendChild(reportLink);
+  body.appendChild(actions);
 
 
   article.appendChild(body);
@@ -260,6 +242,10 @@ function buildCardEl(listing) {
 
 // Empty state
 function showEmptyState() {
+
+  if (listingsGrid) {
+    listingsGrid.removeAttribute('aria-busy');
+  }
 
   if (listingsGrid) {
     listingsGrid.innerHTML = '';
@@ -277,6 +263,10 @@ function showEmptyState() {
 
 // Error state
 function showErrorState() {
+
+  if (listingsGrid) {
+    listingsGrid.removeAttribute('aria-busy');
+  }
 
   if (listingsGrid) {
     listingsGrid.innerHTML = '';
@@ -313,6 +303,7 @@ function renderListings(listings) {
   }
 
   listingsGrid.innerHTML = '';
+  listingsGrid.removeAttribute('aria-busy');
 
   listings.forEach((listing) => {
 
