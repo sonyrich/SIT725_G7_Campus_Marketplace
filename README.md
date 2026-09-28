@@ -148,6 +148,7 @@ Run from the project root (or the same names from inside `backend/`):
 
 ```
 SIT725_G7_Campus_Marketplace/
+├── docs/testing/                  # UI test report + screenshots
 ├── Dockerfile                     # Image for the app (API + frontend)
 ├── docker-compose.yml             # App + MongoDB, one command
 ├── package.json                   # Root convenience scripts (setup/start/seed)
@@ -274,7 +275,7 @@ npm test              # from the project root or backend/
 
 - Auth flows (register, login, logout, token expiry)
 - Listing flows (create, edit, mark as sold, image upload validation)
-- UI responsiveness across viewport sizes (375px, 768px, 1440px)
+- UI responsiveness across viewport sizes (375px, 768px, 1440px) — see the [UI test report](docs/testing/ui-test-report.md)
 - Cross-browser checks (Chrome, Firefox, Safari, Edge)
 
 ## Team & Roles
