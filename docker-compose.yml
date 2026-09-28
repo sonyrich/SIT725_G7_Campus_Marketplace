@@ -1,0 +1,40 @@
+# One-command setup for any machine with Docker Desktop installed:
+#
+#   docker compose up --build              -> http://localhost:3000
+#   docker compose exec app npm run seed   -> adds demo accounts + listings
+#
+# Change the host port with:  APP_PORT=8080 docker compose up --build
+services:
+  mongo:
+    image: mongo:7
+    restart: unless-stopped
+    ports:
+      - "27017:27017"          # lets MongoDB Compass / local `npm start` connect too
+    volumes:
+      - mongo-data:/data/db
+    healthcheck:
+      test: ["CMD", "mongosh", "--quiet", "--eval", "db.adminCommand('ping')"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  app:
+    build: .
+    restart: unless-stopped
+    depends_on:
+      mongo:
+        condition: service_healthy
+    ports:
+      - "${APP_PORT:-3000}:3000"
+    environment:
+      PORT: 3000
+      MONGO_URI: mongodb://mongo:27017/campus-marketplace
+      # Development default only — override with JWT_SECRET=... docker compose up
+      JWT_SECRET: ${JWT_SECRET:-change-me-local-docker-secret}
+      JWT_EXPIRES_IN: 1d
+    volumes:
+      - uploads:/app/backend/uploads
+
+volumes:
+  mongo-data:
+  uploads:
