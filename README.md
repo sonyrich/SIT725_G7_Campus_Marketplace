@@ -32,6 +32,7 @@ Built as part of the SIT725 unit project (Deakin University).
 - **File uploads**: Multer
 - **Architecture**: MVC (Model-View-Controller)
 - **Frontend**: HTML, CSS, vanilla JavaScript (served by the same Express server)
+- **Testing**: Mocha, Chai, Supertest, mongodb-memory-server, GitHub Actions
 - **Containerisation**: Docker + Docker Compose (optional)
 
 ## Quick Start (any computer)
@@ -131,6 +132,7 @@ Run from the project root (or the same names from inside `backend/`):
 | `npm start` | Starts the server (API + website) |
 | `npm run dev` | Starts the server with nodemon (auto-restart) |
 | `npm run seed` | Creates demo accounts and listings |
+| `npm test` | Runs the automated API tests (in-memory MongoDB) |
 
 ## Troubleshooting
 
@@ -176,6 +178,7 @@ SIT725_G7_Campus_Marketplace/
 │   │   └── errorHandler.js        # Centralised error handling
 │   ├── scripts/
 │   │   └── seed.js                # Demo data
+│   ├── test/                      # Mocha + Chai + Supertest API tests
 │   ├── uploads/                   # Stored listing images (gitignored)
 │   └── .env.example               # Environment variable template
 └── frontend/public/               # VIEW — static HTML/CSS/JS
@@ -246,9 +249,31 @@ details, status (pending/reviewed/dismissed), timestamps
 
 ## Testing
 
-Manual testing covers:
+### Automated API tests
+
+29 automated tests (Mocha + Chai + Supertest) cover the app, auth, listings and FR-11 My Listings endpoints — including ownership checks (403), auth checks (401), validation (400) and the dashboard stats.
+
+```bash
+npm test              # from the project root or backend/
+```
+
+- Tests run against a **throwaway in-memory MongoDB** (`mongodb-memory-server`), so nothing needs to be installed or running and your real data is never touched. The first run downloads a MongoDB binary (~100 MB), so it takes a little longer.
+- To use an existing MongoDB instead, set `MONGO_URI_TEST` to a database whose name contains `test` (the suite refuses any other name, because it wipes the database):
+  `MONGO_URI_TEST=mongodb://127.0.0.1:27017/campus-marketplace-test npm test`
+- Set `TEST_VERBOSE=1` to see server error logs during tests.
+- GitHub Actions (`.github/workflows/tests.yml`) runs the suite on Node 20 and 22 for every pull request to `main`.
+
+| File | Covers |
+|---|---|
+| `backend/test/app.test.js` | Health check, JSON 404 for unknown API routes, static pages served |
+| `backend/test/auth.test.js` | FR-01 register (hashing, duplicates, validation), FR-02 login |
+| `backend/test/listings.test.js` | FR-04 create, FR-05/06 browse & search, FR-08 get by id, FR-09 edit (owner only), FR-13 mark sold (owner only) |
+| `backend/test/myListings.test.js` | FR-11 My Listings: auth, ownership, sorting, stats, status filter, validation |
+
+### Manual testing
+
 - Auth flows (register, login, logout, token expiry)
-- Listing flows (create, fetch, edit, mark as sold, image upload validation)
+- Listing flows (create, edit, mark as sold, image upload validation)
 - UI responsiveness across viewport sizes (375px, 768px, 1440px)
 - Cross-browser checks (Chrome, Firefox, Safari, Edge)
 
