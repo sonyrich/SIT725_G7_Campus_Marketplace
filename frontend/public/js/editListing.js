@@ -19,6 +19,19 @@ const params = new URLSearchParams(window.location.search);
 
 const listingId = params.get('id');
 
+// FR-11: when opened from My Listings (?return=my-listings.html), go back
+// there after saving/cancelling. Only local page names are accepted.
+const returnParam = params.get('return');
+const returnTo = returnParam && /^[\w-]+\.html$/.test(returnParam)
+    ? returnParam
+    : 'index.html';
+
+const cancelLink = document.querySelector('.form-actions a');
+
+if (cancelLink) {
+    cancelLink.href = returnTo;
+}
+
 
 // Check login
 const token = localStorage.getItem('token');
@@ -210,7 +223,7 @@ form.addEventListener(
 
 
             window.location.href =
-                'index.html';
+                returnTo;
 
 
         } catch (error) {

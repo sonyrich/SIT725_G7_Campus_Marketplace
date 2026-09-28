@@ -12,7 +12,7 @@ form.addEventListener('submit', async function (e) {
 
     if (!token) {
         alert('Please log in before creating a listing.');
-        window.location.href = 'login.html';
+        window.location.href = 'login.html?next=create-listing.html';
         return;
     }
 
@@ -60,7 +60,8 @@ form.addEventListener('submit', async function (e) {
         }
 
         alert('Listing published!');
-        window.location.href = 'index.html';
+        // FR-11: take the seller to their dashboard to see the new listing
+        window.location.href = 'my-listings.html';
 
     } catch (err) {
         console.error('Create listing error:', err);
