@@ -7,6 +7,7 @@ const {
     getAllListings,
     getListingById,
     updateListing,
+    markListingAsSold,
     getSellerContact
 } = require('../controllers/listingController');
 
@@ -48,6 +49,13 @@ router.put(
     protect,
     upload.single('image'),
     updateListing
+);
+
+// Mark listing as sold
+router.patch(
+    '/:id/status',
+    protect,
+    markListingAsSold
 );
 
 

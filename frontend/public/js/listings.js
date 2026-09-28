@@ -154,6 +154,80 @@ function buildCardEl(listing) {
     editLink.style.cursor = 'pointer';
 
     body.appendChild(editLink);
+
+    // ------------------------------------------------
+    // FR-13 — Mark Item as Sold
+    // Only the owner can flip their own listing's status
+    // ------------------------------------------------
+    if (listing.status !== 'sold') {
+      const soldBtn = document.createElement('button');
+
+      soldBtn.textContent = 'Mark as Sold';
+
+      soldBtn.style.display = 'inline-block';
+      soldBtn.style.marginTop = '10px';
+      soldBtn.style.marginLeft = '10px';
+      soldBtn.style.fontWeight = '600';
+      soldBtn.style.color = '#fff';
+      soldBtn.style.backgroundColor = '#B3413E';
+      soldBtn.style.border = 'none';
+      soldBtn.style.borderRadius = '4px';
+      soldBtn.style.padding = '6px 12px';
+      soldBtn.style.cursor = 'pointer';
+
+      soldBtn.addEventListener('click', async function () {
+        const confirmed = window.confirm(
+          'Mark this listing as sold? It will no longer be visible to buyers.'
+        );
+
+        if (!confirmed) {
+          return;
+        }
+
+        const token = localStorage.getItem('token');
+
+        try {
+          const res = await fetch(
+            `/api/listings/${listing._id}/status`,
+            {
+              method: 'PATCH',
+              headers: {
+                'Authorization': `Bearer ${token}`
+              }
+            }
+          );
+          const data = await res.json();
+
+          if (!res.ok || !data.success) {
+            throw new Error(
+              data.message || 'Failed to mark listing as sold.'
+            );
+          }
+
+          // Re-run the current search/filter so the sold
+          // item drops out of the active listings view
+          fetchListings();
+
+        } catch (error) {
+          console.error('Mark as sold error:', error);
+          alert(error.message);
+        }
+      });
+      body.appendChild(soldBtn);
+    } else {
+
+      const soldBadge = document.createElement('span');
+
+      soldBadge.textContent = 'SOLD';
+
+      soldBadge.style.display = 'inline-block';
+      soldBadge.style.marginTop = '10px';
+      soldBadge.style.marginLeft = '10px';
+      soldBadge.style.fontWeight = '700';
+      soldBadge.style.color = '#B3413E';
+
+      body.appendChild(soldBadge);
+    }
   }
 
 
