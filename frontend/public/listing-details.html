@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Campus Marketplace | Listing Details</title>
+
+    <link rel="icon" type="image/svg+xml" href="favicon.svg">
+    <link rel="stylesheet" href="css/style.css">
+</head>
+
+<body data-page="details">
+
+<header class="masthead">
+    <div class="wrap">
+        <nav>
+            <a href="index.html">Browse</a>
+            <a href="create-listing.html">Sell an item</a>
+            <a href="login.html">Log in</a>
+            <a href="register.html">Sign up</a>
+        </nav>
+    </div>
+</header>
+
+<main>
+    <section class="listing-details-section">
+        <div class="wrap">
+
+            <a href="index.html" class="back-link">
+                ← Back to listings
+            </a>
+
+            <div id="listing-details" class="listing-details">
+
+                <!-- Larger listing image -->
+                <div class="listing-details-image">
+                    <div class="details-image-placeholder">
+                        Listing Image
+                    </div>
+                </div>
+
+                <!-- Listing information -->
+                <div class="listing-information">
+
+                    <span id="listing-condition" class="tag">
+                        Like New
+                    </span>
+
+                    <h1 id="listing-title">
+                        Intro to Algorithms (4th ed.)
+                    </h1>
+
+                    <p id="listing-category" class="meta">
+                        Textbooks · Burwood campus
+                    </p>
+
+                    <p id="listing-price" class="price">
+                        $45
+                    </p>
+
+                    <div class="details-block">
+                        <h2>Description</h2>
+
+                        <p id="listing-description">
+                            Introduction to Algorithms textbook in good
+                            condition. Suitable for university students
+                            studying computer science and information
+                            technology.
+                        </p>
+                    </div>
+
+                    <div class="details-block">
+                        <h2>Seller Information</h2>
+
+                        <p id="listing-seller">
+                            Student seller
+                        </p>
+                    </div>
+
+                    <button
+                        type="button"
+                        id="contact-seller-btn"
+                    >
+                        Contact Seller
+                    </button>
+
+                </div>
+            </div>
+
+            <div
+                id="listing-error"
+                class="empty-state"
+                style="display: none;"
+            >
+                Listing could not be found.
+            </div>
+
+        </div>
+    </section>
+</main>
+
+<footer>
+    <div class="wrap">
+        <p>Campus Marketplace · Deakin University</p>
+    </div>
+</footer>
+
+<script src="js/listing-details.js"></script>
+<script src="js/page-utils.js"></script>
+
+</body>
+</html>
