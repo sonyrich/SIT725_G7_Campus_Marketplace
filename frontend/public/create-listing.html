@@ -5,21 +5,35 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Sell an item — Campus Marketplace</title>
   <link rel="stylesheet" href="css/style.css" />
+  <script src="js/nav.js"></script>
+  <script src="js/toast.js" defer></script>
 </head>
 <body>
+
+  <a class="skip-link" href="#main">Skip to content</a>
 
   <header class="masthead">
     <div class="wrap masthead-inner">
       <a href="index.html" class="brand">Campus <span>Marketplace</span></a>
-      <nav class="primary-nav">
+
+      <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="primary-nav" aria-label="Open menu">
+        <span class="nav-toggle-bar"></span>
+      </button>
+
+      <nav class="primary-nav" id="primary-nav" aria-label="Main">
         <a href="index.html">Browse</a>
         <a href="create-listing.html">Sell an item</a>
-        <a href="#">My listings</a>
-        <a href="login.html">Log in</a>
-        <a href="register.html" class="cta">Sign up</a>
+        <a href="my-listings.html" data-auth="in">My listings</a>
+        <a href="login.html" data-auth="out">Log in</a>
+        <!-- FR-03 Logout Functionality (handled by js/nav.js + js/logout.js) -->
+        <a href="#" data-auth="in" data-action="logout">Log out</a>
+        <span class="nav-user" data-auth="in" data-user-name></span>
+        <a href="register.html" class="btn btn-primary btn-sm" data-auth="out">Sign up</a>
       </nav>
     </div>
   </header>
+
+  <main id="main">
 
   <section class="form-page">
     <div class="wrap">
@@ -78,7 +92,7 @@
           <label for="image">Photo</label>
           <div class="file-drop">
             <input type="file" id="image" name="image" accept="image/*" />
-            <p style="margin: 8px 0 0;">A clear photo helps your item sell faster.</p>
+            <p>A clear photo helps your item sell faster.</p>
           </div>
         </div>
 
@@ -91,17 +105,25 @@
     </div>
   </section>
 
-  <footer>
-    <div class="wrap" style="display:flex; justify-content:space-between; width:100%; flex-wrap:wrap; gap:10px;">
+  </main>
+
+  <footer class="site-footer">
+    <div class="wrap footer-inner">
       <span>Campus Marketplace — built by students, for students.</span>
-      <span>
-        <a href="#">About</a> ·
-        <a href="#">Safety tips</a> ·
+      <span class="online-count" data-online-count hidden></span>
+      <span class="footer-links">
+        <a href="#">About</a>
+        <a href="#">Safety tips</a>
         <a href="#">Contact</a>
       </span>
     </div>
   </footer>
 
   <script src="js/createListing.js"></script>
+  <script src="js/logout.js"></script>
+
+  <!-- Real-time updates (Socket.IO client is served by the backend) -->
+  <script src="/socket.io/socket.io.js"></script>
+  <script src="js/realtime.js"></script>
 </body>
 </html>

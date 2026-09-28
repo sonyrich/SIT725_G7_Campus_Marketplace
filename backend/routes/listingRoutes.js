@@ -5,6 +5,7 @@ const router = express.Router();
 const {
     createListing,
     getAllListings,
+    getMyListings,
     getListingById,
     updateListing,
     markListingAsSold,
@@ -17,6 +18,15 @@ const upload = require('../middleware/upload');
 
 // Get all listings
 router.get('/', getAllListings);
+
+
+// FR-11: My Listings (must be registered before '/:id', otherwise
+// Express would treat "mine" as a listing ID)
+router.get(
+    '/mine',
+    protect,
+    getMyListings
+);
 
 
 // Get seller contact

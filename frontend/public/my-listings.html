@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>My listings — Campus Marketplace</title>
+  <link rel="stylesheet" href="css/style.css" />
+  <script src="js/nav.js"></script>
+  <script src="js/toast.js" defer></script>
+</head>
+<body>
+
+  <a class="skip-link" href="#main">Skip to content</a>
+
+  <header class="masthead">
+    <div class="wrap masthead-inner">
+      <a href="index.html" class="brand">Campus <span>Marketplace</span></a>
+
+      <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="primary-nav" aria-label="Open menu">
+        <span class="nav-toggle-bar"></span>
+      </button>
+
+      <nav class="primary-nav" id="primary-nav" aria-label="Main">
+        <a href="index.html">Browse</a>
+        <a href="create-listing.html">Sell an item</a>
+        <a href="my-listings.html" data-auth="in">My listings</a>
+        <a href="login.html" data-auth="out">Log in</a>
+        <!-- FR-03 Logout Functionality (handled by js/nav.js + js/logout.js) -->
+        <a href="#" data-auth="in" data-action="logout">Log out</a>
+        <span class="nav-user" data-auth="in" data-user-name></span>
+        <a href="register.html" class="btn btn-primary btn-sm" data-auth="out">Sign up</a>
+      </nav>
+    </div>
+  </header>
+
+  <main id="main">
+
+    <!-- FR-11 My Listings Dashboard (Krushal) -->
+    <section class="page-header">
+      <div class="wrap page-header-inner">
+        <div>
+          <h1>My listings</h1>
+          <p class="sub">Everything you've listed — update details, mark items as sold or remove them.</p>
+        </div>
+        <a href="create-listing.html" class="btn btn-primary">+ Sell an item</a>
+      </div>
+    </section>
+
+    <section class="dashboard">
+      <div class="wrap">
+
+        <!-- Summary stats, filled from the "stats" object returned by GET /api/listings/mine -->
+        <dl class="stats-grid" id="stats" aria-label="Listing summary">
+          <div class="stat">
+            <dt>Active listings</dt>
+            <dd id="stat-available">–</dd>
+          </div>
+          <div class="stat">
+            <dt>Sold</dt>
+            <dd id="stat-sold">–</dd>
+          </div>
+          <div class="stat">
+            <dt>Value of active listings</dt>
+            <dd id="stat-available-value">–</dd>
+          </div>
+          <div class="stat">
+            <dt>Earned from sales</dt>
+            <dd id="stat-sold-value">–</dd>
+          </div>
+        </dl>
+
+        <div class="dashboard-toolbar">
+          <div class="segmented" id="status-tabs" role="group" aria-label="Show listings">
+            <button type="button" data-status="all" aria-pressed="true">All <span class="count" data-count="total">0</span></button>
+            <button type="button" data-status="available" aria-pressed="false">Available <span class="count" data-count="available">0</span></button>
+            <button type="button" data-status="sold" aria-pressed="false">Sold <span class="count" data-count="sold">0</span></button>
+          </div>
+
+          <label class="sort-control">
+            <span>Sort by</span>
+            <select id="sort-select">
+              <option value="newest">Newest first</option>
+              <option value="oldest">Oldest first</option>
+              <option value="price-high">Price: high to low</option>
+              <option value="price-low">Price: low to high</option>
+            </select>
+          </label>
+        </div>
+
+        <!-- Success / error feedback for actions (read out by screen readers) -->
+        <div class="dashboard-alert" id="dashboard-alert" role="status" aria-live="polite" hidden></div>
+
+        <div class="my-listings" id="my-listings" aria-live="polite" aria-busy="true">
+          <div class="my-listing skeleton" aria-hidden="true"></div>
+          <div class="my-listing skeleton" aria-hidden="true"></div>
+          <div class="my-listing skeleton" aria-hidden="true"></div>
+        </div>
+
+        <div class="empty-state" id="my-empty" hidden>
+          <p id="my-empty-text">You haven't listed anything yet.</p>
+          <a href="create-listing.html" class="btn btn-primary">List your first item</a>
+        </div>
+
+        <div class="empty-state" id="my-error" hidden>
+          <p id="my-error-text">We couldn't load your listings.</p>
+          <button type="button" class="btn btn-secondary" id="retry-btn">Try again</button>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- Confirmation dialog for Mark as sold / Delete -->
+    <dialog class="confirm-dialog" id="confirm-dialog" aria-labelledby="confirm-title">
+      <form method="dialog">
+        <h2 id="confirm-title">Are you sure?</h2>
+        <p id="confirm-message"></p>
+        <div class="confirm-actions">
+          <button type="submit" value="cancel" class="btn btn-secondary">Cancel</button>
+          <button type="submit" value="confirm" class="btn btn-primary" id="confirm-ok">Confirm</button>
+        </div>
+      </form>
+    </dialog>
+
+  </main>
+
+  <footer class="site-footer">
+    <div class="wrap footer-inner">
+      <span>Campus Marketplace — built by students, for students.</span>
+      <span class="online-count" data-online-count hidden></span>
+      <span class="footer-links">
+        <a href="#">About</a>
+        <a href="#">Safety tips</a>
+        <a href="#">Contact</a>
+      </span>
+    </div>
+  </footer>
+
+  <script src="js/myListings.js"></script>
+  <script src="js/logout.js"></script>
+
+  <!-- Real-time updates (Socket.IO client is served by the backend) -->
+  <script src="/socket.io/socket.io.js"></script>
+  <script src="js/realtime.js"></script>
+</body>
+</html>

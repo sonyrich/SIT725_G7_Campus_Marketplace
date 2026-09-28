@@ -1,12 +1,17 @@
-// Entry point: connects to MongoDB, then starts the HTTP server.
+// Entry point: connects to MongoDB, then starts the HTTP + Socket.IO server.
+const http = require('http');
 const config = require('./config/env');
 const connectDB = require('./config/db');
 const app = require('./app');
+const { initRealtime } = require('./realtime/socket');
 
 const start = async () => {
     await connectDB();
 
-    const server = app.listen(config.port, () => {
+    const server = http.createServer(app);
+    initRealtime(server);
+
+    server.listen(config.port, () => {
         console.log(`Campus Marketplace running at http://localhost:${config.port}`);
     });
 
