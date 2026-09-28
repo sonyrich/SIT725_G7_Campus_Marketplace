@@ -3,6 +3,15 @@
 
 const LISTINGS_API = '/api/listings';
 
+// Toast when available (js/toast.js), plain alert otherwise
+function notify(message, type) {
+    if (window.showToast) {
+        window.showToast(message, type);
+    } else {
+        alert(message);
+    }
+}
+
 const form = document.getElementById('create-listing-form');
 
 form.addEventListener('submit', async function (e) {
@@ -11,7 +20,9 @@ form.addEventListener('submit', async function (e) {
     const token = localStorage.getItem('token');
 
     if (!token) {
-        alert('Please log in before creating a listing.');
+        if (window.showToast) {
+            window.showToast.flash('Please log in to list an item.', 'error');
+        }
         window.location.href = 'login.html?next=create-listing.html';
         return;
     }
@@ -53,19 +64,21 @@ form.addEventListener('submit', async function (e) {
         const data = await res.json();
 
         if (!res.ok || !data.success) {
-            alert(data.message || 'Could not create the listing. Please check your details.');
+            notify(data.message || 'Could not create the listing. Please check your details.', 'error');
             submitBtn.disabled = false;
             submitBtn.textContent = originalBtnText;
             return;
         }
 
-        alert('Listing published!');
+        if (window.showToast) {
+            window.showToast.flash('Listing published! It is now live on the marketplace.');
+        }
         // FR-11: take the seller to their dashboard to see the new listing
         window.location.href = 'my-listings.html';
 
     } catch (err) {
         console.error('Create listing error:', err);
-        alert('Something went wrong. Is the backend server running?');
+        notify('Something went wrong. Is the backend server running?', 'error');
         submitBtn.disabled = false;
         submitBtn.textContent = originalBtnText;
     }
