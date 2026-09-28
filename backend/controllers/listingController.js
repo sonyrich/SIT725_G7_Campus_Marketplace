@@ -79,6 +79,73 @@ const getAllListings = async (req, res) => {
 
 
 // --------------------------------------------------
+// FR-11: My Listings — the logged-in user's own listings
+// GET /api/listings/mine?status=available|sold
+// Returns every listing the user owns (available AND sold, unlike the public
+// feed) plus summary stats for the dashboard.
+// --------------------------------------------------
+const MY_LISTING_STATUSES = ['available', 'sold'];
+
+const getMyListings = async (req, res) => {
+    try {
+        const { status } = req.query;
+
+        if (
+            status !== undefined &&
+            (typeof status !== 'string' || !MY_LISTING_STATUSES.includes(status))
+        ) {
+            return res.status(400).json({
+                success: false,
+                message: 'status must be either "available" or "sold"'
+            });
+        }
+
+        // One query for all of the user's listings; a student's own listings
+        // are a small set, so stats and the status filter are worked out here.
+        const allListings = await Listing.find({ seller: req.user._id })
+            .sort({ createdAt: -1 });
+
+        const stats = {
+            total: allListings.length,
+            available: 0,
+            sold: 0,
+            availableValue: 0,
+            soldValue: 0
+        };
+
+        allListings.forEach((listing) => {
+            if (listing.status === 'sold') {
+                stats.sold += 1;
+                stats.soldValue += listing.price;
+            } else {
+                stats.available += 1;
+                stats.availableValue += listing.price;
+            }
+        });
+
+        const listings = status
+            ? allListings.filter((listing) => listing.status === status)
+            : allListings;
+
+        return res.status(200).json({
+            success: true,
+            count: listings.length,
+            stats,
+            data: listings
+        });
+
+    } catch (error) {
+        console.error('Get my listings error:', error);
+
+        return res.status(500).json({
+            success: false,
+            message: 'Server error while fetching your listings'
+        });
+    }
+};
+
+
+// --------------------------------------------------
 // FR-09: Get one listing by ID
 // --------------------------------------------------
 const getListingById = async (req, res) => {
@@ -473,6 +540,7 @@ const getSellerContact = async (req, res) => {
 module.exports = {
     createListing,
     getAllListings,
+    getMyListings,
     getListingById,
     updateListing,
     markListingAsSold,
