@@ -373,6 +373,21 @@
     loadListings();
   });
 
+  // Real-time (js/realtime.js): refresh when one of MY listings changes
+  // somewhere else — e.g. edited in another tab or removed by an admin
+  let liveTimer = null;
+  window.addEventListener('listing:changed', function (event) {
+    const change = event.detail || {};
+    // A brand-new listing isn't in our list yet (it may be ours, posted from
+    // another tab/device), so always re-check on 'created'. Otherwise ignore
+    // changes to listings that aren't ours.
+    if (change.action !== 'created' && change.listingId && !findListing(change.listingId)) {
+      return;
+    }
+    clearTimeout(liveTimer);
+    liveTimer = setTimeout(loadListings, 300);
+  });
+
   const initialStatus = window.location.hash.replace('#', '');
   if (initialStatus === 'available' || initialStatus === 'sold') {
     state.status = initialStatus;

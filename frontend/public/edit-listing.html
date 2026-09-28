@@ -235,6 +235,7 @@
   <footer class="site-footer">
     <div class="wrap footer-inner">
       <span>Campus Marketplace — built by students, for students.</span>
+      <span class="online-count" data-online-count hidden></span>
       <span class="footer-links">
         <a href="#">About</a>
         <a href="#">Safety tips</a>
@@ -247,5 +248,9 @@
   <script src="js/editListing.js"></script>
 
   <script src="js/logout.js"></script>
+
+  <!-- Real-time updates (Socket.IO client is served by the backend) -->
+  <script src="/socket.io/socket.io.js"></script>
+  <script src="js/realtime.js"></script>
 </body>
 </html>

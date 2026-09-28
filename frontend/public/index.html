@@ -75,7 +75,7 @@
   <section class="listings-section">
     <div class="wrap">
 
-      <h2>Recently listed</h2>
+      <h2>Recently listed <span class="live-indicator" data-live-indicator hidden>Live</span></h2>
 
 
       <!-- Cards are rendered from GET /api/listings by js/listings.js -->
@@ -109,6 +109,7 @@
   <footer class="site-footer">
     <div class="wrap footer-inner">
       <span>Campus Marketplace — built by students, for students.</span>
+      <span class="online-count" data-online-count hidden></span>
       <span class="footer-links">
         <a href="#">About</a>
         <a href="#">Safety tips</a>
@@ -121,6 +122,10 @@
 
   <!-- FR-03 Logout Functionality -->
   <script src="js/logout.js"></script>
+
+  <!-- Real-time updates (Socket.IO client is served by the backend) -->
+  <script src="/socket.io/socket.io.js"></script>
+  <script src="js/realtime.js"></script>
 
 </body>
 </html>

@@ -7,6 +7,7 @@
      4. Buttons              9. Page headers         14. Responsive
      5. Masthead + nav      10. Dashboard (FR-11)    15. Motion + hover effects
                                                     16. Toast notifications
+                                                    17. Real-time indicators
    ===================================================================== */
 
 @import url('https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,600;1,9..144,500&family=Space+Grotesk:wght@400;500;600&display=swap');
@@ -1299,6 +1300,50 @@ html[data-auth="in"] [data-auth="out"] { display: none !important; }
 
 @media (max-width: 520px) {
   .toast-region { left: 16px; right: 16px; bottom: 16px; width: auto; }
+}
+
+/* ---------- 17. Real-time indicators (js/realtime.js) ---------- */
+
+.live-indicator {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-left: 10px;
+  padding: 2px 9px;
+  border-radius: var(--radius-pill);
+  background: var(--ivy-tint);
+  border: 1px solid rgba(47, 107, 79, 0.3);
+  color: var(--ivy-dark);
+  font-family: var(--font-ui);
+  font-size: 11.5px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  vertical-align: middle;
+}
+
+.live-indicator::before,
+.online-count::before {
+  content: '';
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--ivy);
+  animation: live-pulse 2s ease-in-out infinite;
+}
+
+.online-count {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.live-indicator[hidden],
+.online-count[hidden] { display: none; }
+
+@keyframes live-pulse {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(47, 107, 79, 0.45); }
+  50% { box-shadow: 0 0 0 5px rgba(47, 107, 79, 0); }
 }
 
 /* ---------- Keyframes ---------- */
