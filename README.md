@@ -181,6 +181,7 @@ SIT725_G7_Campus_Marketplace/
 └── frontend/public/               # VIEW — static HTML/CSS/JS
     ├── index.html                 # Marketplace homepage
     ├── create-listing.html
+    ├── my-listings.html           # FR-11 My Listings dashboard
     ├── edit-listing.html
     ├── report-listing.html
     ├── register.html
@@ -199,6 +200,7 @@ All responses use `{ success: true, data }` on success and `{ success: false, me
 | POST | `/api/auth/register` | No | FR-01 Register — body `fullName, email, password, studentId` | Aditya / Krushal |
 | POST | `/api/auth/login` | No | FR-02 Login — body `email, password` | Jayadhwaj |
 | GET | `/api/listings` | No | FR-05 Browse, FR-06 Search — query `?category=&search=` | Sony |
+| GET | `/api/listings/mine` | Yes | FR-11 My Listings — the user's own listings (available **and** sold) + `stats`. Optional `?status=available\|sold` | Krushal |
 | GET | `/api/listings/:id` | No | FR-08 View details | Surya / Tanvi |
 | POST | `/api/listings` | Yes | FR-04 Create — multipart `title, description, price, category, condition, image` | Jayadhwaj / Sony |
 | PUT | `/api/listings/:id` | Yes (owner) | FR-09 Edit | Surya |
@@ -209,6 +211,17 @@ All responses use `{ success: true, data }` on success and `{ success: false, me
 | DELETE | `/api/admin/listings/:id` | Admin | FR-15 Remove a listing | Jayadhwaj |
 
 Logout (FR-03) is handled client-side by clearing the stored token.
+
+**Example — FR-11 My Listings response**
+
+```json
+{
+  "success": true,
+  "count": 4,
+  "stats": { "total": 4, "available": 3, "sold": 1, "availableValue": 113, "soldValue": 15 },
+  "data": [ { "_id": "...", "title": "Intro to Algorithms (4th ed.)", "status": "available", "price": 45, "...": "..." } ]
+}
+```
 
 **Auth details**: passwords hashed with bcrypt (10 salt rounds); JWT signed with `JWT_SECRET`.
 
