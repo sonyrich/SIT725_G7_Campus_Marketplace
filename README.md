@@ -19,6 +19,7 @@ Built as part of the SIT725 unit project (Deakin University).
 - [Troubleshooting](#troubleshooting)
 - [Project Structure (MVC)](#project-structure-mvc)
 - [API Endpoints](#api-endpoints)
+- [Real-time Updates](#real-time-updates)
 - [Data Models](#data-models)
 - [Testing](#testing)
 - [Team & Roles](#team--roles)
@@ -32,6 +33,7 @@ Built as part of the SIT725 unit project (Deakin University).
 - **File uploads**: Multer
 - **Architecture**: MVC (Model-View-Controller)
 - **Frontend**: HTML, CSS, vanilla JavaScript (served by the same Express server)
+- **Real-time**: Socket.IO (live listing updates, online count)
 - **Testing**: Mocha, Chai, Supertest, mongodb-memory-server, GitHub Actions
 - **Containerisation**: Docker + Docker Compose (optional)
 
@@ -176,7 +178,10 @@ SIT725_G7_Campus_Marketplace/
 │   │   ├── authMiddleware.js      # JWT verification
 │   │   ├── adminMiddleware.js     # Admin-only guard
 │   │   ├── upload.js              # Multer image upload config
+│   │   ├── listingChangeNotifier.js  # Emits real-time events after listing changes
 │   │   └── errorHandler.js        # Centralised error handling
+│   ├── realtime/
+│   │   └── socket.js              # Socket.IO server (live updates, presence)
 │   ├── scripts/
 │   │   └── seed.js                # Demo data
 │   ├── test/                      # Mocha + Chai + Supertest API tests
@@ -229,6 +234,19 @@ Logout (FR-03) is handled client-side by clearing the stored token.
 
 **Auth details**: passwords hashed with bcrypt (10 salt rounds); JWT signed with `JWT_SECRET`.
 
+## Real-time Updates
+
+Socket.IO runs on the same port as the website (no extra setup). Every open browser tab gets:
+
+| Event | Payload | Used for |
+|---|---|---|
+| `listing:changed` | `{ action: 'created' \| 'updated' \| 'sold' \| 'deleted', listingId, at }` | Homepage grid refreshes (keeping the current search/filter) and shows a toast for new or sold items; My Listings refreshes when one of your listings changes elsewhere |
+| `presence:count` | number | "N students online" in the footer |
+
+Events are emitted by `middleware/listingChangeNotifier.js` after any **successful** (2xx) create/edit/sold/delete request, including admin removals, so no controller code depends on Socket.IO. Only the action and listing id are broadcast, never user details; pages re-fetch data through the normal authenticated REST API. If the socket can't connect, the site keeps working without live updates.
+
+**Try it:** open http://localhost:3000 in two windows, log in on one, and post or mark an item as sold. The other window updates instantly.
+
 ## Data Models
 
 **User**
@@ -252,7 +270,7 @@ details, status (pending/reviewed/dismissed), timestamps
 
 ### Automated API tests
 
-29 automated tests (Mocha + Chai + Supertest) cover the app, auth, listings and FR-11 My Listings endpoints — including ownership checks (403), auth checks (401), validation (400) and the dashboard stats.
+34 automated tests (Mocha + Chai + Supertest) cover the app, auth, listings, FR-11 My Listings endpoints and the Socket.IO real-time events — including ownership checks (403), auth checks (401), validation (400) and the dashboard stats.
 
 ```bash
 npm test              # from the project root or backend/
@@ -270,6 +288,7 @@ npm test              # from the project root or backend/
 | `backend/test/auth.test.js` | FR-01 register (hashing, duplicates, validation), FR-02 login |
 | `backend/test/listings.test.js` | FR-04 create, FR-05/06 browse & search, FR-08 get by id, FR-09 edit (owner only), FR-13 mark sold (owner only) |
 | `backend/test/myListings.test.js` | FR-11 My Listings: auth, ownership, sorting, stats, status filter, validation |
+| `backend/test/realtime.test.js` | Socket.IO: online count, `created`/`sold` events with ids, no event on failed requests |
 
 ### Manual testing
 
@@ -298,7 +317,7 @@ npm test              # from the project root or backend/
 | Aditya | Delete Listings, Sprint 2 integration testing, documentation | FR-10 |
 | Jayadhwaj | Contact Seller, Administrator Management | FR-12, FR-15 |
 | Sony | Search Listings by Keyword, Mark Item as Sold, deployment check | FR-06, FR-13 |
-| Krushal | My Listings Dashboard, UI bug fixes & responsive layout, button/navigation standardisation, CSS transitions, cross-device UI testing, portable setup (Docker, seed data) | FR-11 |
+| Krushal | My Listings Dashboard, UI bug fixes & responsive layout, button/navigation standardisation, CSS transitions, cross-device UI testing, automated API tests, real-time updates (Socket.IO), portable setup (Docker, seed data) | FR-11 |
 | Tanvi | Filter Listings, View Item Details Page, CSS polish | FR-07, FR-08 |
 | Surya | Edit Listings, Report Listing, end-to-end testing | FR-09, FR-14 |
 
