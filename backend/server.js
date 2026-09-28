@@ -1,49 +1,23 @@
-require('dotenv').config();
-
-const express = require('express');
-const cors = require('cors');
-const path = require('path');
-
+// Entry point: connects to MongoDB, then starts the HTTP server.
+const config = require('./config/env');
 const connectDB = require('./config/db');
+const app = require('./app');
 
-const authRoutes = require('./routes/authRoutes');
-const listingRoutes = require('./routes/listingRoutes');
-const adminRoutes = require('./routes/adminRoutes');
-const reportRoutes = require('./routes/reportRoutes');
+const start = async () => {
+    await connectDB();
 
-const errorHandler = require('./middleware/errorHandler');
+    const server = app.listen(config.port, () => {
+        console.log(`Campus Marketplace running at http://localhost:${config.port}`);
+    });
 
-const PORT = process.env.PORT || 3000;
+    server.on('error', (error) => {
+        if (error.code === 'EADDRINUSE') {
+            console.error(`Port ${config.port} is already in use. Set a different PORT in backend/.env (e.g. PORT=3001).`);
+        } else {
+            console.error('Server error:', error.message);
+        }
+        process.exit(1);
+    });
+};
 
-const app = express();
-
-connectDB();
-
-app.use(cors());
-app.use(express.json());
-
-app.use('/uploads', express.static('uploads'));
-app.use(express.static(path.join(__dirname, '../frontend/public')));
-
-
-// API routes
-app.use('/api/auth', authRoutes);
-app.use('/api/listings', listingRoutes);
-app.use('/api/admin', adminRoutes);
-
-// FR-14 Report Listing
-app.use('/api/reports', reportRoutes);
-
-
-app.get('/', (req, res) => {
-    res.send('API testing and running properly');
-});
-
-
-// Error handler must be registered last
-app.use(errorHandler);
-
-
-app.listen(PORT, () => {
-    console.log(`APP is running on port ${PORT}`);
-});
+start();
