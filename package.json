@@ -1,0 +1,16 @@
+{
+  "name": "campus-marketplace",
+  "version": "1.0.0",
+  "private": true,
+  "description": "SIT725 Group 7 — Campus Marketplace. Convenience scripts so the app can be run from the project root.",
+  "scripts": {
+    "setup": "npm install --prefix backend",
+    "start": "npm start --prefix backend",
+    "dev": "npm run dev --prefix backend",
+    "seed": "npm run seed --prefix backend",
+    "test": "npm test --prefix backend"
+  },
+  "engines": {
+    "node": ">=20.19.0"
+  }
+}
