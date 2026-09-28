@@ -15,6 +15,7 @@ const adminRoutes = require('./routes/adminRoutes');
 const reportRoutes = require('./routes/reportRoutes');
 
 const errorHandler = require('./middleware/errorHandler');
+const listingChangeNotifier = require('./middleware/listingChangeNotifier');
 
 const app = express();
 
@@ -33,6 +34,10 @@ app.get('/api/health', (req, res) => {
 
 // API routes
 app.use('/api/auth', authRoutes);
+// Real-time: broadcast listing changes to open browsers (see realtime/socket.js)
+app.use('/api/listings', listingChangeNotifier);
+app.use('/api/admin/listings', listingChangeNotifier);
+
 app.use('/api/listings', listingRoutes);
 app.use('/api/admin', adminRoutes);
 
