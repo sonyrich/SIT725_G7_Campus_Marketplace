@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+  />
+
+  <title>
+    Report listing — Campus Marketplace
+  </title>
+
+  <link
+    rel="stylesheet"
+    href="css/style.css"
+  />
+  <script src="js/nav.js"></script>
+  <script src="js/toast.js" defer></script>
+</head>
+
+
+<body>
+
+  <a class="skip-link" href="#main">Skip to content</a>
+
+  <header class="masthead">
+    <div class="wrap masthead-inner">
+      <a href="index.html" class="brand">Campus <span>Marketplace</span></a>
+
+      <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="primary-nav" aria-label="Open menu">
+        <span class="nav-toggle-bar"></span>
+      </button>
+
+      <nav class="primary-nav" id="primary-nav" aria-label="Main">
+        <a href="index.html">Browse</a>
+        <a href="create-listing.html">Sell an item</a>
+        <a href="my-listings.html" data-auth="in">My listings</a>
+        <a href="login.html" data-auth="out">Log in</a>
+        <!-- FR-03 Logout Functionality (handled by js/nav.js + js/logout.js) -->
+        <a href="#" data-auth="in" data-action="logout">Log out</a>
+        <span class="nav-user" data-auth="in" data-user-name></span>
+        <a href="register.html" class="btn btn-primary btn-sm" data-auth="out">Sign up</a>
+      </nav>
+    </div>
+  </header>
+
+  <main id="main">
+
+
+  <section class="form-page">
+
+    <div class="wrap">
+
+      <h1>
+        Report listing
+      </h1>
+
+      <p class="sub">
+        Report an inappropriate, suspicious or potentially unsafe marketplace listing.
+      </p>
+
+
+      <form
+        class="card-form"
+        id="report-listing-form"
+      >
+
+        <div class="field">
+
+          <label>
+            Listing
+          </label>
+
+          <p id="listing-name" class="readonly-field">
+            Loading listing...
+          </p>
+
+        </div>
+
+
+        <div class="field">
+
+          <label for="reason">
+            Reason for report
+          </label>
+
+          <select
+            id="reason"
+            name="reason"
+            required
+          >
+
+            <option
+              value=""
+              disabled
+              selected
+            >
+              Select a reason
+            </option>
+
+            <option value="inappropriate">
+              Inappropriate content
+            </option>
+
+            <option value="suspicious">
+              Suspicious listing
+            </option>
+
+            <option value="scam">
+              Possible scam
+            </option>
+
+            <option value="other">
+              Other
+            </option>
+
+          </select>
+
+        </div>
+
+
+        <div class="field">
+
+          <label for="details">
+            Additional details
+            <span class="hint">
+              Optional — maximum 500 characters
+            </span>
+          </label>
+
+          <textarea
+            id="details"
+            name="details"
+            maxlength="500"
+            placeholder="Explain why you are reporting this listing..."
+          ></textarea>
+
+        </div>
+
+
+        <div class="form-actions">
+
+          <button
+            type="submit"
+            class="btn-primary"
+          >
+            Submit report
+          </button>
+
+          <a
+            href="index.html"
+            class="btn-text"
+          >
+            Cancel
+          </a>
+
+        </div>
+
+      </form>
+
+    </div>
+
+  </section>
+
+
+  </main>
+
+  <footer class="site-footer">
+    <div class="wrap footer-inner">
+      <span>Campus Marketplace — built by students, for students.</span>
+      <span class="online-count" data-online-count hidden></span>
+      <span class="footer-links">
+        <a href="#">About</a>
+        <a href="#">Safety tips</a>
+        <a href="#">Contact</a>
+      </span>
+    </div>
+  </footer>
+
+
+  <script src="js/reportListing.js"></script>
+
+  <script src="js/logout.js"></script>
+
+  <!-- Real-time updates (Socket.IO client is served by the backend) -->
+  <script src="/socket.io/socket.io.js"></script>
+  <script src="js/realtime.js"></script>
+</body>
+
+</html>

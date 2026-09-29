@@ -1,144 +1,131 @@
-const API_URL = "http://localhost:3000/api/auth";
+// frontend/public/js/auth.js
 
-document.addEventListener("DOMContentLoaded", function () {
+const API_BASE = '/api/auth';
 
-    // ======================================================
-    // REGISTER
-    // ======================================================
+// After login/register, go back to the page that sent the user here.
+// Only plain page names from this site are allowed.
+function getRedirectTarget() {
+    const next = new URLSearchParams(window.location.search).get('next');
+    return next && /^[\w-]+\.html$/.test(next) ? next : 'index.html';
+}
 
-    const registerForm = document.getElementById("registerForm");
+// ---------- LOGIN ----------
 
-    if (registerForm) {
-        registerForm.addEventListener("submit", async function (event) {
-            event.preventDefault();
+const loginForm = document.getElementById('loginForm');
 
-            const fullName = document.getElementById("fullName").value.trim();
-            const email = document.getElementById("email").value.trim();
-            const studentId = document.getElementById("studentId").value.trim();
-            const password = document.getElementById("password").value;
-            const confirmPassword =
-                document.getElementById("confirmPassword").value;
-            const message = document.getElementById("registerMessage");
+if (loginForm) {
+    loginForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
 
-            if (password !== confirmPassword) {
-                message.textContent = "Passwords do not match.";
-                message.style.color = "red";
+        const email = document.getElementById('loginEmail').value.trim();
+        const password = document.getElementById('loginPassword').value;
+        const messageEl = document.getElementById('loginMessage');
+
+        try {
+            const res = await fetch(`${API_BASE}/login`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    email,
+                    password
+                })
+            });
+
+            const data = await res.json();
+
+            if (!res.ok || !data.success) {
+                messageEl.textContent =
+                    data.message || 'Login failed. Please check your details.';
+                messageEl.className = 'message is-error';
                 return;
             }
 
-            try {
-                const response = await fetch(API_URL + "/register", {
-                    method: "POST",
-                    headers: {
-                        "Content-Type": "application/json"
-                    },
-                    body: JSON.stringify({
-                        fullName: fullName,
-                        email: email,
-                        studentId: studentId,
-                        password: password
-                    })
-                });
+            // Store JWT and user information for authenticated pages.
+            localStorage.setItem('token', data.data.token);
+            localStorage.setItem('user', JSON.stringify(data.data.user));
 
-                const data = await response.json();
+            messageEl.textContent = 'Login successful! Redirecting...';
+            messageEl.className = 'message is-success';
 
-                if (response.ok) {
-                    message.textContent =
-                        data.message || "Registration successful!";
-                    message.style.color = "green";
+            setTimeout(() => {
+                window.location.href = getRedirectTarget();
+            }, 800);
 
-                    registerForm.reset();
+        } catch (err) {
+            console.error('Login error:', err);
 
-                    setTimeout(function () {
-                        window.location.href = "login.html";
-                    }, 1500);
-                } else {
-                    message.textContent =
-                        data.message || "Registration failed.";
-                    message.style.color = "red";
-                }
+            messageEl.textContent =
+                'Something went wrong. Is the backend server running?';
+            messageEl.className = 'message is-error';
+        }
+    });
+}
 
-            } catch (error) {
-                console.error("Registration error:", error);
+// ---------- REGISTER ----------
 
-                message.textContent =
-                    "Cannot connect to the server. Please try again.";
-                message.style.color = "red";
+const registerForm = document.getElementById('registerForm');
+
+if (registerForm) {
+    registerForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+
+        const fullName = document.getElementById('fullName').value.trim();
+        const email = document.getElementById('email').value.trim();
+        const password = document.getElementById('password').value;
+        const confirmPassword =
+            document.getElementById('confirmPassword').value;
+        const studentId = document.getElementById('studentId').value.trim();
+        const messageEl = document.getElementById('registerMessage');
+
+        if (password !== confirmPassword) {
+            messageEl.textContent = 'Passwords do not match.';
+            messageEl.className = 'message is-error';
+            return;
+        }
+
+        try {
+            const res = await fetch(`${API_BASE}/register`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    fullName,
+                    email,
+                    password,
+                    studentId
+                })
+            });
+
+            const data = await res.json();
+
+            if (!res.ok || !data.success) {
+                messageEl.textContent =
+                    data.message || 'Registration failed.';
+                messageEl.className = 'message is-error';
+                return;
             }
-        });
-    }
 
+            // Store JWT and user information after successful registration.
+            localStorage.setItem('token', data.data.token);
+            localStorage.setItem('user', JSON.stringify(data.data.user));
 
-    // ======================================================
-    // LOGIN
-    // ======================================================
+            messageEl.textContent =
+                'Account created! Redirecting...';
+            messageEl.className = 'message is-success';
 
-    const loginForm = document.getElementById("loginForm");
+            setTimeout(() => {
+                window.location.href = getRedirectTarget();
+            }, 800);
 
-    if (loginForm) {
-        loginForm.addEventListener("submit", async function (event) {
-            event.preventDefault();
+        } catch (err) {
+            console.error('Register error:', err);
 
-            const email =
-                document.getElementById("loginEmail").value.trim();
-
-            const password =
-                document.getElementById("loginPassword").value;
-
-            const message =
-                document.getElementById("loginMessage");
-
-            try {
-                const response = await fetch(API_URL + "/login", {
-                    method: "POST",
-                    headers: {
-                        "Content-Type": "application/json"
-                    },
-                    body: JSON.stringify({
-                        email: email,
-                        password: password
-                    })
-                });
-
-                const data = await response.json();
-
-                if (response.ok) {
-
-                    message.textContent = "Login successful!";
-                    message.style.color = "green";
-
-                    localStorage.setItem(
-                        "token",
-                        data.data.token
-                    );
-
-                    localStorage.setItem(
-                        "user",
-                        JSON.stringify(data.data.user)
-                    );
-
-                    setTimeout(function () {
-                        window.location.href = "index.html";
-                    }, 1000);
-
-                } else {
-
-                    message.textContent =
-                        data.message || "Invalid email or password.";
-
-                    message.style.color = "red";
-                }
-
-            } catch (error) {
-
-                console.error("Login error:", error);
-
-                message.textContent =
-                    "Cannot connect to the server. Please try again.";
-
-                message.style.color = "red";
-            }
-        });
-    }
-
-});
+            messageEl.textContent =
+                'Something went wrong. Is the backend server running?';
+            messageEl.className = 'message is-error';
+        }
+    });
+}

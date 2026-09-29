@@ -4,12 +4,17 @@ const jwt = require('jsonwebtoken');
 
 const registerUser = async (req, res) => {
     try {
-        const { fullName, email, password, studentId } = req.body;
+        const { fullName, email, password, studentId } = req.body || {};
 
-        if (!fullName || !email || !password || !studentId) {
+        if (
+            typeof fullName !== 'string' || !fullName.trim() ||
+            typeof email !== 'string' || !email.trim() ||
+            typeof password !== 'string' || !password ||
+            typeof studentId !== 'string' || !studentId.trim()
+        ) {
             return res.status(400).json({
                 success: false,
-                message: 'Full name, email, password and student ID are required'
+                message: 'Full name, email, password, and student ID are all required'
             });
         }
 
@@ -22,35 +27,56 @@ const registerUser = async (req, res) => {
         if (existingUser) {
             return res.status(409).json({
                 success: false,
-                message: 'An account with this email already exists'
+                message: 'An account with that email already exists'
+            });
+        }
+
+        if (!process.env.JWT_SECRET) {
+            console.error('JWT_SECRET is not set');
+
+            return res.status(500).json({
+                success: false,
+                message: 'Server misconfiguration'
             });
         }
 
         const hashedPassword = await bcrypt.hash(password, 10);
 
-        const user = await User.create({
+        const newUser = await User.create({
             fullName: fullName.trim(),
             email: normalizedEmail,
             password: hashedPassword,
             studentID: studentId.trim()
         });
 
+        const token = jwt.sign(
+            {
+                userId: newUser._id,
+                role: newUser.role
+            },
+            process.env.JWT_SECRET,
+            {
+                expiresIn: process.env.JWT_EXPIRES_IN || '1d'
+            }
+        );
+
         return res.status(201).json({
             success: true,
             message: 'Registration successful!',
             data: {
+                token,
                 user: {
-                    id: user._id,
-                    fullName: user.fullName,
-                    email: user.email,
-                    studentID: user.studentID,
-                    role: user.role
+                    id: newUser._id,
+                    fullName: newUser.fullName,
+                    email: newUser.email,
+                    studentID: newUser.studentID,
+                    role: newUser.role
                 }
             }
         });
 
     } catch (error) {
-        console.error('Registration error:', error);
+        console.error('Register error:', error);
 
         return res.status(500).json({
             success: false,
@@ -113,7 +139,7 @@ const loginUser = async (req, res) => {
             },
             process.env.JWT_SECRET,
             {
-                expiresIn: '1d'
+                expiresIn: process.env.JWT_EXPIRES_IN || '1d'
             }
         );
 

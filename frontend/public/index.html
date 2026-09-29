@@ -1,16 +1,20 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-
   <title>Campus Marketplace | Home</title>
-
   <link rel="stylesheet" href="css/style.css" />
   <link rel="icon" type="image/svg+xml" href="favicon.svg" />
+
+  <script src="js/nav.js"></script>
+  <script src="js/toast.js" defer></script>
 </head>
 
 <body data-page="home">
+
+  <a class="skip-link" href="#main">Skip to content</a>
 
   <header class="masthead">
     <div class="wrap masthead-inner">
@@ -19,210 +23,158 @@
         Campus <span>Marketplace</span>
       </a>
 
-      <nav class="primary-nav">
+      <button
+        class="nav-toggle"
+        type="button"
+        aria-expanded="false"
+        aria-controls="primary-nav"
+        aria-label="Open menu"
+      >
+        <span class="nav-toggle-bar"></span>
+      </button>
+
+      <nav class="primary-nav" id="primary-nav" aria-label="Main">
         <a href="index.html">Browse</a>
         <a href="create-listing.html">Sell an item</a>
-        <a href="#">My listings</a>
-        <a href="login.html">Log in</a>
-        <a href="register.html" class="cta">Sign up</a>
+        <a href="my-listings.html" data-auth="in">My listings</a>
+        <a href="login.html" data-auth="out">Log in</a>
+
+        <!-- FR-03 Logout Functionality -->
+        <a href="#" data-auth="in" data-action="logout">Log out</a>
+
+        <span class="nav-user" data-auth="in" data-user-name></span>
+
+        <a href="register.html" class="btn btn-primary btn-sm" data-auth="out">
+          Sign up
+        </a>
       </nav>
 
     </div>
   </header>
 
+  <main id="main">
 
-  <section class="hero">
-    <div class="wrap">
+    <section class="hero">
+      <div class="wrap">
 
-      <div class="trust-note">
-        <span class="dot"></span>
-        Verified with your student email — no strangers off-campus
-      </div>
+        <div class="trust-note">
+          <span class="dot"></span>
+          Verified with your student email — no strangers off-campus
+        </div>
 
-      <h1>Buy and sell within your own campus</h1>
+        <h1>Buy and sell within your own campus</h1>
 
-      <p class="lede">
-        Textbooks, electronics, furniture and more — listed by students you can
-        actually trust, because everyone here verified with a university email.
-      </p>
+        <p class="lede">
+          Textbooks, electronics, furniture and more — listed by students you can
+          actually trust, because everyone here verified with a university email.
+        </p>
 
-      <div class="search-row">
-        <input
-          type="search"
-          id="search-input"
-          placeholder="Search listings, e.g. 'calculus textbook'"
-        />
+        <div class="search-row">
+          <label for="search-input" class="visually-hidden">
+            Search listings
+          </label>
 
-        <button id="search-btn" type="button">Search</button>
-      </div>
+          <input
+            type="search"
+            id="search-input"
+            placeholder="Search listings, e.g. 'calculus textbook'"
+          />
 
-      <div class="filters" id="category-filters">
-        <button class="active" data-category="all">All</button>
-        <button data-category="textbooks">Textbooks</button>
-        <button data-category="electronics">Electronics</button>
-        <button data-category="furniture">Furniture</button>
-        <button data-category="bikes">Bikes</button>
-        <button data-category="other">Other</button>
-      </div>
+          <button id="search-btn" type="button">Search</button>
+        </div>
 
-    </div>
-  </section>
-
-
-  <section class="listings-section">
-    <div class="wrap">
-
-      <h2>Recently listed</h2>
-
-      <p class="listings-note">
-        Showing sample listings — this section is wired to live data once the
-        Get All Listings API is ready (see <code>js/listings.js</code>).
-      </p>
-
-
-      <!--
-        LISTINGS GRID
-
-        Sample listings for the Campus Marketplace.
-        Images are stored locally inside the images folder.
-      -->
-
-      <div class="listings-grid" id="listings-grid">
-
-
-        <!-- Listing 1: Intro to Algorithms -->
-        <a
-          href="listing-details.html?id=1"
-          class="listing-card-link"
-          data-category="textbooks"
+        <div
+          class="filters"
+          id="category-filters"
+          role="group"
+          aria-label="Filter by category"
         >
-          <article class="listing-card">
-
-            <div class="thumb">
-              <img
-                src="images/algorithms.jpg"
-                alt="Algorithms textbook"
-              />
-            </div>
-
-            <span class="tag">Like New</span>
-
-            <div class="body">
-              <p class="title">Intro to Algorithms (4th ed.)</p>
-              <p class="meta">Textbooks · Burwood campus</p>
-              <p class="price">$45</p>
-            </div>
-
-          </article>
-        </a>
-
-
-        <!-- Listing 2: Mini fridge -->
-        <a
-          href="listing-details.html?id=2"
-          class="listing-card-link"
-          data-category="electronics"
-        >
-          <article class="listing-card">
-
-            <div class="thumb">
-              <img
-                src="images/mini-fridge.jpg"
-                alt="Mini fridge"
-              />
-            </div>
-
-            <span class="tag">Good</span>
-
-            <div class="body">
-              <p class="title">Mini fridge — barely used</p>
-              <p class="meta">Electronics · Geelong campus</p>
-              <p class="price">$60</p>
-            </div>
-
-          </article>
-        </a>
-
-
-        <!-- Listing 3: Study desk lamp -->
-        <a
-          href="listing-details.html?id=3"
-          class="listing-card-link"
-          data-category="furniture"
-        >
-          <article class="listing-card">
-
-            <div class="thumb">
-              <img
-                src="images/desk-lamp.jpg"
-                alt="Study desk lamp"
-              />
-            </div>
-
-            <span class="tag">Fair</span>
-
-            <div class="body">
-              <p class="title">Study desk lamp</p>
-              <p class="meta">Furniture · Burwood campus</p>
-              <p class="price">$8</p>
-            </div>
-
-          </article>
-        </a>
-
-
-        <!-- Listing 4: Commuter bike -->
-        <a
-          href="listing-details.html?id=4"
-          class="listing-card-link"
-          data-category="bikes"
-        >
-          <article class="listing-card">
-
-            <div class="thumb">
-              <img
-                src="images/commuter-bike.jpg"
-                alt="Commuter bike"
-              />
-            </div>
-
-            <span class="tag">Good</span>
-
-            <div class="body">
-              <p class="title">Commuter bike, size M</p>
-              <p class="meta">Bikes · Waurn Ponds campus</p>
-              <p class="price">$120</p>
-            </div>
-
-          </article>
-        </a>
-
+          <button type="button" class="active" data-category="all">All</button>
+          <button type="button" data-category="textbooks">Textbooks</button>
+          <button type="button" data-category="electronics">Electronics</button>
+          <button type="button" data-category="furniture">Furniture</button>
+          <button type="button" data-category="bikes">Bikes</button>
+          <button type="button" data-category="other">Other</button>
+        </div>
 
       </div>
+    </section>
 
+    <section class="listings-section">
+      <div class="wrap">
 
-      <div
-        class="empty-state"
-        id="empty-state"
-        style="display: none;"
-      >
-        No listings match your search yet — try a different keyword or category.
+        <h2>
+          Recently listed
+          <span class="live-indicator" data-live-indicator hidden>
+            Live
+          </span>
+        </h2>
+
+        <!-- Cards are rendered from GET /api/listings by js/listings.js -->
+        <div
+          class="listings-grid"
+          id="listings-grid"
+          aria-live="polite"
+          aria-busy="true"
+        >
+          <p class="listings-note">Loading listings…</p>
+        </div>
+
+        <!-- Shown when a search/filter returns no results -->
+        <div
+          class="empty-state"
+          id="empty-state"
+          style="display: none;"
+        >
+          No listings match your search yet — try a different keyword or category.
+        </div>
+
+        <!-- Shown when loading listings fails -->
+        <div
+          class="empty-state"
+          id="error-state"
+          style="display: none;"
+        >
+          Something went wrong loading listings — check your connection and try again.
+        </div>
+
       </div>
+    </section>
 
-    </div>
-  </section>
+  </main>
 
+  <footer class="site-footer">
+    <div class="wrap footer-inner">
 
-  <footer>
-    <div class="wrap">
-      <p>Campus Marketplace</p>
+      <span>
+        Campus Marketplace — built by students, for students.
+      </span>
+
+      <span
+        class="online-count"
+        data-online-count
+        hidden
+      ></span>
+
+      <span class="footer-links">
+        <a href="#">About</a>
+        <a href="#">Safety tips</a>
+        <a href="#">Contact</a>
+      </span>
+
     </div>
   </footer>
-
 
   <!-- Page scripts -->
   <script src="js/listings.js"></script>
   <script src="js/page-utils.js"></script>
+
+  <!-- FR-03 Logout Functionality -->
+  <script src="js/logout.js"></script>
+
+  <!-- Real-time updates -->
+  <script src="/socket.io/socket.io.js"></script>
+  <script src="js/realtime.js"></script>
 
 </body>
 </html>

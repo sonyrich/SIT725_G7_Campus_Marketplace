@@ -1,24 +1,28 @@
-require('dotenv').config();
-const authRoutes = require('./routes/authRoutes');
-const express = require('express'); //requiring express
-const connectDB= require('./config/db');
-const cors = require('cors');
+// Entry point: connects to MongoDB, then starts the HTTP + Socket.IO server.
+const http = require('http');
+const config = require('./config/env');
+const connectDB = require('./config/db');
+const app = require('./app');
+const { initRealtime } = require('./realtime/socket');
 
+const start = async () => {
+    await connectDB();
 
-const PORT = process.env.PORT;
+    const server = http.createServer(app);
+    initRealtime(server);
 
-const app = express(); //calling express
+    server.listen(config.port, () => {
+        console.log(`Campus Marketplace running at http://localhost:${config.port}`);
+    });
 
-connectDB()
-app.use(cors());
-app.use(express.json());
-app.use('/api/auth', authRoutes);
-app.use('/uploads', express.static('uploads'));
+    server.on('error', (error) => {
+        if (error.code === 'EADDRINUSE') {
+            console.error(`Port ${config.port} is already in use. Set a different PORT in backend/.env (e.g. PORT=3001).`);
+        } else {
+            console.error('Server error:', error.message);
+        }
+        process.exit(1);
+    });
+};
 
-app.get('/',(req,res)=>{
-    res.send("API testing and running properly");
-})
-
-app.listen(PORT, ()=>{
-    console.log(`APP is running on port${PORT}`);
-})
+start();

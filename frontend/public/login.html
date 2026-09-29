@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
 
@@ -9,29 +8,91 @@
     <title>Campus Marketplace | Login</title>
 
     <link rel="stylesheet" href="css/style.css">
-
-    <!-- Campus Marketplace favicon -->
     <link rel="icon" type="image/svg+xml" href="favicon.svg">
+
+    <script src="js/nav.js"></script>
+    <script src="js/toast.js" defer></script>
 </head>
 
 <body data-page="login">
 
-    <header class="navbar">
-        <h1>Campus Marketplace</h1>
+    <a class="skip-link" href="#main">Skip to content</a>
 
-        <nav>
-            <a href="index.html">Home</a>
-            <a href="login.html">Login</a>
-            <a href="register.html">Register</a>
-        </nav>
+    <header class="masthead">
+        <div class="wrap masthead-inner">
+
+            <a href="index.html" class="brand">
+                Campus <span>Marketplace</span>
+            </a>
+
+            <button
+                class="nav-toggle"
+                type="button"
+                aria-expanded="false"
+                aria-controls="primary-nav"
+                aria-label="Open menu"
+            >
+                <span class="nav-toggle-bar"></span>
+            </button>
+
+            <nav
+                class="primary-nav"
+                id="primary-nav"
+                aria-label="Main"
+            >
+                <a href="index.html">Browse</a>
+
+                <a href="create-listing.html">
+                    Sell an item
+                </a>
+
+                <a
+                    href="my-listings.html"
+                    data-auth="in"
+                >
+                    My listings
+                </a>
+
+                <a
+                    href="login.html"
+                    data-auth="out"
+                >
+                    Log in
+                </a>
+
+                <!-- FR-03 Logout Functionality -->
+                <a
+                    href="#"
+                    data-auth="in"
+                    data-action="logout"
+                >
+                    Log out
+                </a>
+
+                <span
+                    class="nav-user"
+                    data-auth="in"
+                    data-user-name
+                ></span>
+
+                <a
+                    href="register.html"
+                    class="btn btn-primary btn-sm"
+                    data-auth="out"
+                >
+                    Sign up
+                </a>
+            </nav>
+
+        </div>
     </header>
 
 
-    <main class="auth-container">
+    <main id="main" class="auth-container">
 
         <div class="auth-card">
 
-            <h2>Welcome Back</h2>
+            <h1>Welcome Back</h1>
 
             <p class="auth-subtitle">
                 Login to your Campus Marketplace account.
@@ -105,14 +166,41 @@
     </main>
 
 
-    <footer>
-        <p>&copy; 2026 Campus Marketplace</p>
+    <footer class="site-footer">
+
+        <div class="wrap footer-inner">
+
+            <span>
+                Campus Marketplace — built by students, for students.
+            </span>
+
+            <span
+                class="online-count"
+                data-online-count
+                hidden
+            ></span>
+
+            <span class="footer-links">
+                <a href="#">About</a>
+                <a href="#">Safety tips</a>
+                <a href="#">Contact</a>
+            </span>
+
+        </div>
+
     </footer>
 
 
     <!-- Page scripts -->
     <script src="js/auth.js"></script>
     <script src="js/page-utils.js"></script>
+
+    <!-- FR-03 Logout Functionality -->
+    <script src="js/logout.js"></script>
+
+    <!-- Real-time updates -->
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="js/realtime.js"></script>
 
 </body>
 </html>
