@@ -9,7 +9,8 @@ const {
     getListingById,
     updateListing,
     markListingAsSold,
-    getSellerContact
+    getSellerContact,
+    deleteListing
 } = require('../controllers/listingController');
 
 const { protect } = require('../middleware/authMiddleware');
@@ -66,6 +67,14 @@ router.patch(
     '/:id/status',
     protect,
     markListingAsSold
+);
+
+//Delete lissting
+
+router.delete(
+    '/:id',
+    protect,
+    deleteListing
 );
 
 
