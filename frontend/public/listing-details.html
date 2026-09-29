@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Listing Details — Campus Marketplace</title>
+  <link rel="stylesheet" href="css/style.css" />
+  <script src="js/nav.js"></script>
+  <script src="js/toast.js" defer></script>
+</head>
+
+<body>
+  <a class="skip-link" href="#main">Skip to content</a>
+
+  <header class="masthead">
+    <div class="wrap masthead-inner">
+      <a href="index.html" class="brand">
+        Campus <span>Marketplace</span>
+      </a>
+
+      <button
+        class="nav-toggle"
+        type="button"
+        aria-expanded="false"
+        aria-controls="primary-nav"
+        aria-label="Open menu"
+      >
+        <span class="nav-toggle-bar"></span>
+      </button>
+
+      <nav class="primary-nav" id="primary-nav" aria-label="Main">
+        <a href="index.html">Browse</a>
+        <a href="create-listing.html">Sell an item</a>
+        <a href="my-listings.html" data-auth="in">My listings</a>
+        <a href="login.html" data-auth="out">Log in</a>
+        <a href="#" data-auth="in" data-action="logout">Log out</a>
+        <span class="nav-user" data-auth="in" data-user-name></span>
+        <a href="register.html" class="btn btn-primary btn-sm" data-auth="out">
+          Sign up
+        </a>
+      </nav>
+    </div>
+  </header>
+
+  <main id="main">
+    <section class="listing-details-section">
+      <div class="wrap">
+        <a href="index.html" class="back-link">← Back to listings</a>
+
+        <div id="listing-loading" class="listing-message">
+          Loading listing...
+        </div>
+
+        <div
+          id="listing-error"
+          class="listing-message"
+          style="display: none;"
+        >
+          Unable to load this listing.
+        </div>
+
+        <article
+          id="listing-details"
+          class="listing-details"
+          style="display: none;"
+        >
+          <div class="listing-image-container">
+            <img id="listing-image" src="" alt="" />
+          </div>
+
+          <div class="listing-information">
+            <span id="listing-condition" class="tag"></span>
+
+            <h1 id="listing-title"></h1>
+
+            <p id="listing-price" class="price"></p>
+
+            <div class="details-block">
+              <h2>Category</h2>
+              <p id="listing-category"></p>
+            </div>
+
+            <div class="details-block">
+              <h2>Description</h2>
+              <p id="listing-description"></p>
+            </div>
+
+            <div class="details-block">
+              <h2>Seller</h2>
+              <p id="listing-seller"></p>
+            </div>
+
+            <button
+              id="contact-seller-btn"
+              type="button"
+              class="btn btn-primary"
+            >
+              Contact Seller
+            </button>
+          </div>
+        </article>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="wrap footer-inner">
+      <span>Campus Marketplace — built by students, for students.</span>
+      <span class="online-count" data-online-count hidden></span>
+
+      <span class="footer-links">
+        <a href="#">About</a>
+        <a href="#">Safety tips</a>
+        <a href="#">Contact</a>
+      </span>
+    </div>
+  </footer>
+
+  <script src="js/listing-details.js"></script>
+  <script src="js/logout.js"></script>
+  <script src="/socket.io/socket.io.js"></script>
+  <script src="js/realtime.js"></script>
+</body>
+</html>
