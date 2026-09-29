@@ -62,6 +62,15 @@ function buildCardEl(listing) {
   const article = document.createElement('article');
   article.className = 'listing-card';
 
+  article.addEventListener('click', function (event) {
+    if (event.target.closest('.card-actions')) {
+      return;
+    }
+
+    window.location.href =
+      `listing-details.html?id=${encodeURIComponent(listing._id)}`;
+  });
+
 
   // Image / placeholder
   const thumb = document.createElement('div');
