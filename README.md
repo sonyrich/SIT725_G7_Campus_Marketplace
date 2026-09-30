@@ -218,7 +218,8 @@ All responses use `{ success: true, data }` on success and `{ success: false, me
 | POST | `/api/reports` | Yes | FR-14 Report — body `listingId, reason, details?` | Surya |
 | GET | `/api/admin/listings` | Admin | FR-15 Review all listings | Jayadhwaj |
 | DELETE | `/api/admin/listings/:id` | Admin | FR-15 Remove a listing | Jayadhwaj |
-| DELETE | /api/listings/:id | Yes (owner) | FR-10 Delete Listings | Aditya |
+| DELETE | `/api/listings/:id` | Yes (owner) | FR-10 Delete Listings | Aditya |
+
 Logout (FR-03) is handled client-side by clearing the stored token.
 
 **Example — FR-11 My Listings response**
